@@ -128,9 +128,11 @@ function custom_breadcrumbs_panels_ctools_render_alter($info, $page, $data) {
             $objs['node'] = $context->data;
           }
         }
-        foreach ($handler->conf['display']->content as $pane) {
-          if ($pane->type == 'node') {
-            $objs['node'] =  node_load($pane->configuration['nid']);
+        if (!empty($handler->conf['display'])) {
+          foreach ($handler->conf['display']->content as $pane) {
+            if ($pane->type == 'node') {
+              $objs['node'] = node_load($pane->configuration['nid']);
+            }
           }
         }
         custom_breadcrumbs_set_breadcrumb($breadcrumb, $objs);
