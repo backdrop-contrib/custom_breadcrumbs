@@ -409,7 +409,7 @@ function _custom_breadcrumbs_get_breadcrumb($breadcrumb, $objs, &$locations) {
 
   // Use the returned items to set the trail.
   foreach ($items as $item) {
-    if ($item['crumb']) {
+    if (isset($item['crumb'])) {
       $trail[] = $item['crumb'];
     }
     if (variable_get('custom_breadcrumbs_force_active_trail', FALSE)) {
