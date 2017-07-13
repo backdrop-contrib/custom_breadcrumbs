@@ -854,8 +854,8 @@ function custom_breadcrumbs_theme_registry_alter(&$theme_registry) {
     // Store the existing theme functions.
     $themes = variable_get('custom_breadcrumbs_menu_theme', array());
     $themes[$theme] = array(
-      'menu_item' => $theme_registry['menu_item']['function'],
-      'menu_item_link' => $theme_registry['menu_item_link']['function'],
+      'menu_item' => isset($theme_registry['menu_item']) ? $theme_registry['menu_item']['function'] : "",
+      'menu_item_link' => isset($theme_registry['menu_item_link']) ? $theme_registry['menu_item_link']['function'] : "",
     );
     variable_set('custom_breadcrumbs_menu_theme', $themes);
     // Replace these with our own functions. We will call the original functions after call these override functions.
