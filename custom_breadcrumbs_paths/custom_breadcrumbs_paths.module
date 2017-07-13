@@ -134,6 +134,7 @@ function _custom_breadcrumbs_paths_set_breadcrumb($objs = array(), $priority = 1
             if ($matchpath) {
               // Assume a longer path match is a better fit than a prior shorter match.
               if (($pos = strrpos($breadcrumb->specific_path, '*')) !== FALSE) {
+                // @codingStandardsIgnoreLine
                 if (!isset($max) || (isset($max) && ($pos > $max))) {
                   $max = $pos;
                   $max_id = $id;

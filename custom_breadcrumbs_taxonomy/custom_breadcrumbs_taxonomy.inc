@@ -15,6 +15,7 @@ function custom_breadcrumbs_taxonomy_node_get_terms($node, $key = 'tid') {
     if (!isset($terms[$node->vid][$key])) {
       $query = db_select('taxonomy_index', 'r');
       $t_alias = $query->join('taxonomy_term_data', 't', 'r.tid = t.tid');
+      // @codingStandardsIgnoreLine
       $v_alias = $query->join('taxonomy_vocabulary', 'v', 't.vid = v.vid');
       $query->fields( $t_alias );
       $query->condition("r.nid", $node->nid);
@@ -184,6 +185,7 @@ function custom_breadcrumbs_taxonomy_node_get_lightest_term($node) {
     if (count($terms) > 1) {
       foreach ($terms as $term) {
         // Only consider terms in the lightest vocabulary.
+        // @codingStandardsIgnoreLine
         if (!isset($vid)) {
           $vid = $term->vid;
         }
@@ -200,6 +202,7 @@ function custom_breadcrumbs_taxonomy_node_get_lightest_term($node) {
         else {
           $weight = $term->weight;
         }
+        // @codingStandardsIgnoreLine
         if ((isset($lweight) && ($weight < $lweight)) || !isset($lweight)) {
           $lterm = $term;
           $lweight = $weight;
