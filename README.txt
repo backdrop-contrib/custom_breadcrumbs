@@ -1,8 +1,28 @@
+CONTENTS OF THIS FILE
+---------------------
+   
+ * Introduction
+ * Requirements
+ * Installation
+ * Summary
+ * New Features
+ * User Interface
+ * Languages
+ * HOME breadcrumb
+ * Use PHP in breadcrumb titles and paths
+ * Add CSS classes to custom breadcrumb elements
+ * Special Identifiers
+ * Maintainers
 
-Custom Breadcrumbs 2.0
-----------------------
 
-Summary
+INTRODUCTION
+------------
+
+Allows administrators to set up parametrized breadcrumb trails for any node
+type.
+
+
+SUMMARY
 -------
 * Enable the module and any option submodules (see below for details)
 * Assign 'administer custom breadcrumbs' permission to those roles that should
@@ -36,7 +56,8 @@ Summary
 * Click save to save the breadcrumb
 * Visit the page and your breadcrumb should appear!
 
-New Features
+
+NEW FEATURES
 ------------
 Beginning with the 6.x-2.x release, custom breadcrumbs has many new features which are
 available through optional modules in the custom breadcrumbs package. The base
@@ -151,7 +172,8 @@ variety of situations:
   details. For example, if a template file uses the variable $foo, then
   access to that variable would be through $variables['foo'].
 
-User Interface
+
+USER INTERFACE
 --------------
 The user interface has been modified for Custom Breadcrumbs 2.0. Breadcrumbs
 from all custom breadcrumbs modules are tabulated at
@@ -166,13 +188,15 @@ edit each.  If no breadcrumbs have been defined for a particular node, then a
 link can be followed back to admin/structure/custom_breacrumbs to add a custom
 breadcrumb.
 
-Languages
+
+LANGUAGES
 ---------
 If the core Locale module is enabled, then an additional option to specify the
 language for the breadcrumb is available when constructing the breadcrumb trail
 (with any of the custom breadcrumb modules).
 
-HOME breadcrumb
+
+HOME BREADCRUMB
 ---------------
 The text to display at beginning of the breadcrumb trail can be assigned from
 the custom breadcrumb configuration settings page. Typically this is Home or
@@ -198,7 +222,8 @@ http://example.com/#lang-prefix#/admin/settings/custom-breadcrumbs.
 
 See http://drupal.org/node/313272 for additional information.
 
-Use PHP in breadcrumb titles and paths
+
+USE PHP IN BREADCRUMB TITLES AND PATHS
 --------------------------------------
 If this advanced option is enabled at admin/settings/custom-breadcrumbs, then
 users given 'use php in custom breadcrumbs' permission can include small php
@@ -240,7 +265,8 @@ snippet in an include file and use a php require_once statement in the titles
 and/or paths section of your custom breadcrumb to include and evaluate your
 code. See http://drupal.org/node/654766 for an example of this.
 
-Add CSS classes to custom breadcrumb elements
+
+ADD CSS CLASSES TO CUSTOM BREADCRUMB ELEMENTS
 ---------------------------------------------
 
 You can enable this feature on the custom breadcrumbs configuration screen
@@ -259,7 +285,7 @@ path, views or taxonomy) and id is the breadcrumb id number.
 See http://drupal.org/node/643796#comment-2532998 for more information on this
 feature.
 
-Special Identifiers
+SPECIAL IDENTIFIERS
 -------------------
 In Custom Breadcrumbs 2.0, Special identifiers are now provided as a separate,
 optional module - custom_breadcrumbs_identifiers. At present, this module
@@ -297,6 +323,31 @@ For example: <pathauto>|[ogname-raw]
 
 Note that not all identifiers require the use of |path.
 
-Authors
--------
-bennybobw, dbabbage, Michelle, MGN
+
+REQUIREMENTS
+------------
+
+No special requirements
+
+
+INSTALLATION
+------------
+
+Install as you would normally install a contributed Drupal module. See:
+https://drupal.org/documentation/install/modules-themes/modules-7 for further
+information.
+
+
+MAINTAINERS
+-----------
+
+Current maintainers:
+* Colan Schwartz (colan) - https://www.drupal.org/user/58704
+* Renato Gonçalves (RenatoG) - https://www.drupal.org/user/3326031
+* MGN - https://www.drupal.org/user/321760
+* thePanz - https://www.drupal.org/user/58689
+
+* bennybobw
+* dbabbage
+* Michelle
+* MGN
