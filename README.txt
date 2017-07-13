@@ -31,6 +31,7 @@ SUMMARY
   php to determine breadcrumb visibility.
 * Go to Configuration > User Interface > Custom breadcrumbs Settings to select
   the 'Home' breacrumb text and possibly other global settings.
+* Don't forget the breadcrumb settings (if any) at the admin/appearance/settings/[THEME] page!
 * Go to Structure > Custom breadcrumbs to add new breadcrumbs
 * To add a breadcrumb, click on one of the tabs at the top of the page. For
   example, click 'Node' to create a custom breadcrumb based on node type.
