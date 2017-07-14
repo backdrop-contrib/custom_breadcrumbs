@@ -51,6 +51,13 @@ function custom_breadcrumbs_variable_info($options) {
     'default' => 'Home',
     'required' => TRUE,
   );
+  $variables['custom_breadcrumb_home_link'] = array(
+    'type' => 'string',
+    'title' => t('Homepage breadcrumb link', array(), $options),
+    'description' => t('Specify the homepage breadcrumb link.', array(), $options),
+    'default' => '<front>',
+    'required' => TRUE,
+  );
 
   return $variables;
 }
@@ -359,9 +366,10 @@ function _custom_breadcrumbs_get_breadcrumb($breadcrumb, $objs, &$locations) {
   if (!empty($trail)) {
     // @codingStandardsIgnoreLine
     $title = variable_get('custom_breadcrumb_home', t('Home'));
+    $link = variable_get('custom_breadcrumb_home_link', '<front>');
     $locations[] = array(
       'title' => variable_get('custom_breadcrumb_home', t('Home')),
-      'href' => '<front>',
+      'href' => $link,
       'localized_options' => array(),
     );
   }
@@ -565,6 +573,7 @@ function _custom_breadcrumbs_delete_breadcrumb($module, $key, $bid) {
  */
 function custom_breadcrumbs_home_crumb() {
   $hometext = variable_get('custom_breadcrumb_home', t('Home'));
+  $homelink = variable_get('custom_breadcrumb_home_link', '<front>');
   if ($hometext != '') {
     // Add any html identifiers.
     $options = _custom_breadcrumbs_identifiers_option();
@@ -575,7 +584,7 @@ function custom_breadcrumbs_home_crumb() {
     if (isset($title_parts[1])) {
       $options['attributes']['title'] = $title_parts[1];
     }
-    $trail = array(l($title_parts[0], '<front>', $options));
+    $trail = array(l($title_parts[0], $homelink, $options));
   }
   else {
     $trail = array();

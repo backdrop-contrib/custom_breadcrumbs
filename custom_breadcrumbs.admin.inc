@@ -406,6 +406,14 @@ function custom_breadcrumbs_admin_settings($form, &$form_state) {
     '#description' => t('This text will be displayed as the first item of the breadcrumb trail. Typically Home or your site name. Leave blank to have no home breadcrumb. You can also specify a title attribute (tooltip text) to add to the link. Just separate the crumb text and the title attribute text with a pipe (|) symbol (i.e. Home crumb text|attribute title text).'),
   );
 
+  $form['settings']['custom_breadcrumb_home_link'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Home breadcrumb link'),
+    '#default_value' => variable_get('custom_breadcrumb_home_link', '<front>'),
+    '#description' => t('This link will be the link of the first item of the breadcrumb trail. Typically &lt;front&gt;.'),
+  );
+
+
   $form['settings']['custom_breadcrumbs_append_page_title_fieldset'] = array(
     '#type' => 'fieldset',
     '#title' => t('Page Title'),
