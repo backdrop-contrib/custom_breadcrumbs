@@ -12,7 +12,8 @@ function custom_breadcrumbs_paths_install() {
 
   $t = get_t();
 
-  // Search for Paths breadcrumbs in existing {custom_breadcrumb} and copy to new table.
+  // Search for Paths breadcrumbs in existing {custom_breadcrumb} and copy to
+  // new table.
   drupal_set_message($t('Looking for Specify Path breadcrumbs to copy from {custom_breadcrumb}...'));
   $result = db_query("SELECT * FROM {custom_breadcrumb} WHERE node_type = :node_type", array(':node_type' => 'Specify Path'));
   $found = 0;
@@ -114,6 +115,8 @@ function custom_breadcrumbs_paths_update_6000() {
 }
 
 /**
+ * Implements hook_update_N().
+ *
  * Adds name field for improved organization of breadcrumbs
  * Remove set_active_menu field because it is no longer used.
  */
