@@ -6,5 +6,7 @@ description = Provides custom breadcrumbs for views pages.
 core = 7.x
 configure = admin/config/user-interface/custom-breadcrumbs
 
+# @codingStandardsIgnoreLine
 files[] = custom_breadcrumbs_views.install
+# @codingStandardsIgnoreLine
 files[] = custom_breadcrumbs_views.module
