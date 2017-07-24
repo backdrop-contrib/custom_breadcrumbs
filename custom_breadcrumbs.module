@@ -704,6 +704,11 @@ function _custom_breadcrumbs_create_crumb_items($title, $original_path, $attribu
     if ($path != '<none>') {
       $options = drupal_parse_url($path);
       $options = array_merge($options, $attributes);
+
+      if (!is_array($options)) {
+        $options[] = $options;
+      }
+
       $crumbs[] = array(
         'crumb' => l($title, $options['path'], $options),
         'title' => $title,
