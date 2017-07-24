@@ -8,8 +8,10 @@
 /**
  * Implements hook_cb_identifier_list().
  *
+ * @codingStandardsIgnoreStart
  * @return
  *   An array of text strings describing special identifier behavoir.
+ * @codingStandardsIgnoreEnd
  */
 function custom_breadcrumbs_identifiers_cb_identifier_list() {
   $identifiers = array();
@@ -20,7 +22,7 @@ function custom_breadcrumbs_identifiers_cb_identifier_list() {
   }
 
   // Additional identifiers can be added here.
-  $identifiers['<book-hierarchy>'] =  t('Provides crumbs for each parent node of a book page. Whatever is placed in the corresponding position of the title area will be ignored. It should not be used with the pipe (|) symbol.');
+  $identifiers['<book-hierarchy>'] = t('Provides crumbs for each parent node of a book page. Whatever is placed in the corresponding position of the title area will be ignored. It should not be used with the pipe (|) symbol.');
   $identifiers['<page-title>'] = t('Provides a plain text crumb using the page title. Whatever is placed in the corresponding position of the title area will be ignored. It should not be used with the pipe (|) symbol.');
   $identifiers['<menu-parent-trail>'] = t('Produces crumbs for each parent item for the given path. The title information for this line will be ignored because the menu link titles are used. If a path is not provided following the pipe (|) symbol, the current path with be used.');
   return $identifiers;
@@ -64,6 +66,7 @@ function custom_breadcrumbs_identifiers_cb_identifier_values($identifier, $obj) 
       );
       $crumb_items[] = $crumb_item;
       break;
+
     case '<page-title>':
       // Decode title to properly handle special characters.
       $title = filter_xss(drupal_get_title());
@@ -73,6 +76,7 @@ function custom_breadcrumbs_identifiers_cb_identifier_values($identifier, $obj) 
       );
       $crumb_items[] = $crumb_item;
       break;
+
     case '<pathauto>':
       $options = drupal_parse_url($obj['path']);
       $options = array_merge($options, $obj['attributes']);
@@ -127,7 +131,7 @@ function custom_breadcrumbs_identifiers_cb_identifier_values($identifier, $obj) 
       }
       break;
 
-      // Support for showing a paths parent menu link items as crumbs.
+    // Support for showing a paths parent menu link items as crumbs.
     case '<menu-parent-trail>':
       $title = $obj['title'];
       $path = ($obj['path'] != '') ? $obj['path'] : $_GET['q'];

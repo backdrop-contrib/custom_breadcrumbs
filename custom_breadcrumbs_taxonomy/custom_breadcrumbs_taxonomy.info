@@ -5,7 +5,11 @@ dependencies[] = custom_breadcrumbs
 dependencies[] = taxonomy
 core = 7.x
 configure = admin/config/user-interface/custom-breadcrumbs
+# @codingStandardsIgnoreLine
 files[] = custom_breadcrumbs_taxonomy.admin.inc
+# @codingStandardsIgnoreLine
 files[] = custom_breadcrumbs_taxonomy.inc
+# @codingStandardsIgnoreLine
 files[] = custom_breadcrumbs_taxonomy.install
+# @codingStandardsIgnoreLine
 files[] = custom_breadcrumbs_taxonomy.module

@@ -4,5 +4,5 @@ description = Provides special identifiers for custom breadcrumbs.
 dependencies[] = custom_breadcrumbs
 core = 7.x
 configure = admin/config/user-interface/custom-breadcrumbs
-
+@codingStandardsIgnoreLine
 files[] = custom_breadcrumbs_identifiers.module
