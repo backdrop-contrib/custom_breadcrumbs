@@ -4,7 +4,11 @@ description = Allows administrators to define custom breadcrumb trails for node 
 core = 7.x
 configure = admin/config/user-interface/custom-breadcrumbs
 
+# @codingStandardsIgnoreLine
 files[] = custom_breadcrumbs.admin.inc
+# @codingStandardsIgnoreLine
 files[] = custom_breadcrumbs.install
+# @codingStandardsIgnoreLine
 files[] = custom_breadcrumbs.module
+# @codingStandardsIgnoreLine
 files[] = custom_breadcrumbs_common.inc

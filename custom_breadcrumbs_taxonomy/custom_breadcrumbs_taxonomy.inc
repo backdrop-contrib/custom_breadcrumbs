@@ -344,7 +344,7 @@ function _custom_breadcrumbs_taxonomy_home_trail() {
  * @param array $types
  *   An array of token types to be used in token replacement.
  * @param int $part
- *   A postive integer indicating the breadcrumb segment (home crumb = 0).
+ *   A positive integer indicating the breadcrumb segment (home crumb = 0).
  *
  * @return array
  *   The breadcrumb trail.
@@ -400,7 +400,7 @@ function _custom_breadcrumbs_taxonomy_vocabulary_trail($vid, $is_term_page = FAL
  * @param array $types
  *   An array of token types to be used in token replacement.
  * @param int $part
- *   A postive integer indicating the breadcrumb segment (home crumb = 0).
+ *   A positive integer indicating the breadcrumb segment (home crumb = 0).
  *
  * @return array
  *   The breadcrumb trail.
