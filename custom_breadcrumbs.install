@@ -70,26 +70,10 @@ function custom_breadcrumbs_schema() {
  * Implements hook_uninstall().
  */
 function custom_breadcrumbs_uninstall() {
-
   // Remove persistent variables.
-  variable_del('custom_breadcrumbs_sort');
-  variable_del('custom_breadcrumb_home');
-  variable_del('custom_breadcrumb_home_link');
-  variable_del('custom_breadcrumbs_set_global_home_breadcrumb');
-  variable_del('custom_breadcrumbs_set_menu_breadcrumb');
-  variable_del('custom_breadcrumbs_force_active_trail');
-  variable_del('custom_breadcrumbs_menu_theme');
-  variable_del('custom_breadcrumbs_adjust_module_weights');
-  variable_del('custom_breadcrumbs_use_php_in_titles');
-  variable_del('custom_breadcrumbs_use_exclude_list');
-  variable_del('custom_breadcrumbs_menu_list');
-  variable_del('custom_breadcrumbs_append_bid_class');
-  variable_del('custom_breadcrumbs_type_class');
-  variable_del('custom_breadcrumbs_even_odd_class');
-  variable_del('custom_breadcrumbs_exclude_list');
-  variable_del('custom_breadcrumbs_home_id');
-  variable_del('custom_breadcrumbs_none_span');
-  variable_del('custom_breadcrumbs_parts_class');
+  db_delete('variable')
+    ->condition('name', 'custom_breadcrumbs_%', 'like')
+    ->execute();
 }
 
 /**

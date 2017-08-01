@@ -137,5 +137,7 @@ function custom_breadcrumbs_paths_update_6200() {
  */
 function custom_breadcrumbs_paths_uninstall() {
   // Remove persistent variables.
-  variable_del('custom_breadcrumbs_paths_allow_wildcards');
+  db_delete('variable')
+    ->condition('name', 'custom_breadcrumbs_paths_%', 'like')
+    ->execute();
 }
