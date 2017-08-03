@@ -77,7 +77,7 @@ function custom_breadcrumbs_taxonomy_install() {
 
     if ($found > 0) {
       drupal_set_message(format_plural($found, 'Copied 1 breadcrumb.', 'Copied @count breadcrumbs.'));
-      drupal_set_message($t('You can now disable taxonomy_breadcrumb, and test custom_breadcrumb_taxonomy.'));
+      drupal_set_message($t('You can now disable taxonomy_breadcrumb, and test custom_breadcrumbs_taxonomy.'));
     }
     else {
       drupal_set_message($t('No taxonomy_breadcrumbs were found'));
