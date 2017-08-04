@@ -499,6 +499,7 @@ function custom_breadcrumbs_admin_settings($form, &$form_state) {
     '#type' => 'fieldset',
     '#title' => t('Advanced settings'),
     '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
   );
 
   $form['adv_settings']['custom_breadcrumbs_set_global_home_breadcrumb'] = array(
