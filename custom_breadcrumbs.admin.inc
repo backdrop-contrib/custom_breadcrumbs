@@ -517,7 +517,14 @@ function custom_breadcrumbs_admin_settings($form, &$form_state) {
     '#weight' => -35,
   );
 
-  $form['adv_settings']['custom_breadcrumbs_force_active_trail'] = array(
+  $form['adv_settings']['custom_breadcrumbs_experimental'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Experimental'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['adv_settings']['custom_breadcrumbs_experimental']['custom_breadcrumbs_force_active_trail'] = array(
     '#type' => 'checkbox',
     '#title' => t('Force the active trail'),
     '#description' => t('This options sets the active trail to match the custom breadcrumb trail and overrides the normal theme_links() implementation to add the active-trail class to links. This is experimental and may not work as expected. If this is of interest to you, please test and report back to the custom breadcrumbs issue queue.'),
