@@ -572,6 +572,12 @@ function custom_breadcrumbs_admin_settings($form, &$form_state) {
     '#default_value' => variable_get('custom_breadcrumbs_home_id', FALSE),
   );
 
+  $form['adv_settings']['custom_breadcrumbs_identifiers']['cb_identifier_options']['custom_breadcrumbs_home_class'] = array(
+    '#type' => 'checkbox',
+    '#title' => t("Add a custom-breadcrumbs-home class attribute to the home breadcrumb item."),
+    '#default_value' => variable_get('custom_breadcrumbs_home_class', FALSE),
+  );
+
   $form['adv_settings']['custom_breadcrumbs_identifiers']['cb_identifier_options']['custom_breadcrumbs_parts_class'] = array(
     '#type' => 'checkbox',
     '#title' => t("Add a numbered class attribute for each breadcrumb item."),
