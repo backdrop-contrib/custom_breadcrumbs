@@ -1,5 +1,5 @@
 name = Custom breadcrumbs for taxonomy
-description = "Enables taxonomy based breadcrumbs and allows for node assosciations with taxonomy terms."
+description = "Enables taxonomy based breadcrumbs and allows for node associations with taxonomy terms."
 package = Custom breadcrumbs
 dependencies[] = custom_breadcrumbs
 dependencies[] = taxonomy
