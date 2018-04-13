@@ -82,7 +82,7 @@ function _custom_breadcrumbs_taxonomy_set_breadcrumb($tid, $vid = NULL, $is_term
     if (!empty($terms)) {
       foreach ($terms as $term) {
         $breadcrumbs = custom_breadcrumbs_load_breadcrumbs('custom_breadcrumbs_taxonomy', 'custom_breadcrumbs_taxonomy_term', array('tid' => $term->tid), $languages);
-        $objs['taxonomy'] = $term;
+        $objs['taxonomy_term'] = $term;
         if ($breadcrumb = custom_breadcrumbs_select_breadcrumb($breadcrumbs, $objs)) {
           if (custom_breadcrumbs_set_breadcrumb($breadcrumb, $objs)) {
             custom_breadcrumbs_taxonomy_set_session();
@@ -101,7 +101,7 @@ function _custom_breadcrumbs_taxonomy_set_breadcrumb($tid, $vid = NULL, $is_term
     // No terms match, look for a match on the taxonomy vocabulary.
     foreach ($vids as $vid => $term) {
       $breadcrumbs = custom_breadcrumbs_load_breadcrumbs('custom_breadcrumbs_taxonomy', 'custom_breadcrumbs_taxonomy_vocabulary', array('vid' => $vid), $languages);
-      $objs['taxonomy'] = $term;
+      $objs['taxonomy_term'] = $term;
       if ($breadcrumb = custom_breadcrumbs_select_breadcrumb($breadcrumbs, $objs)) {
         if (custom_breadcrumbs_set_breadcrumb($breadcrumb, $objs)) {
           custom_breadcrumbs_taxonomy_set_session();
