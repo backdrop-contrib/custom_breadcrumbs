@@ -841,7 +841,7 @@ function custom_breadcrumbs_is_visible($breadcrumb, $objs = array()) {
     $trimmed = trim($breadcrumb->visibility_php);
     if ($trimmed != '') {
       // Provide access to objects by standard variable names.
-      foreach ($objs as $obj) {
+      foreach ($objs as $key => $obj) {
         // @codingStandardsIgnoreLine
         $$key = is_object($obj) ? clone $obj : $obj;
       }
