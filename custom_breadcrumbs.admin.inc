@@ -372,7 +372,7 @@ function custom_breadcrumbs_common_form_elements($bid, $breadcrumb) {
   );
   if (module_exists('token')) {
     $form['help']['tokens'] = array(
-      '#theme' => 'token_tree',
+      '#theme' => 'token_tree_link',
       '#token_types' => array('node'),
     );
   }
