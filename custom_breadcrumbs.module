@@ -1287,7 +1287,7 @@ function extract_php($text, $objs = array()) {
   if (drupal_substr(trim($text), 0, 5) == '<?php') {
     // Strip php tags.
     $text = str_replace(array('<?php', '?>'), '', $text);
-    foreach ($objs as $obj) {
+    foreach ($objs as $key => $obj) {
       // @codingStandardsIgnoreLine
       $$key = is_object($obj) ? clone $obj : $obj;
     }
