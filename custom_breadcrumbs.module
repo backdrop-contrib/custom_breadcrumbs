@@ -849,11 +849,10 @@ function custom_breadcrumbs_is_visible($breadcrumb, $objs = array()) {
       }
       ob_start();
       // @codingStandardsIgnoreLine
-      $visibility = eval($trimmed);
+      $visibility = eval('return ' . $trimmed . ';');
       ob_end_clean();
     }
   }
-  return $visibility;
 }
 
 /**
@@ -1282,7 +1281,7 @@ function _custom_breadcrumbs_get_module_weight($names) {
  *   if the result is an array, it will be returned. Otherwise nothing is
  *   returned.
  *
- * @codingStandardsIgnoreStart  
+ * @codingStandardsIgnoreStart
  */
 function extract_php($text, $objs = array()) {
   // @codingStandardsIgnoreEnd
