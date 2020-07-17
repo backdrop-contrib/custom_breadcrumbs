@@ -838,7 +838,7 @@ function custom_breadcrumbs_load_breadcrumbs($module, $table = NULL, $param = ar
 function custom_breadcrumbs_is_visible($breadcrumb, $objs = array()) {
   // @codingStandardsIgnoreEnd
   $visibility = TRUE;
-  if (isset($breadcrumb->visibility_php)) {
+  if (isset($breadcrumb->visibility_php) && $breadcrumb->visibility_php) {
     // Guard against hidden spaces.
     $trimmed = trim($breadcrumb->visibility_php);
     if ($trimmed != '') {
@@ -853,6 +853,7 @@ function custom_breadcrumbs_is_visible($breadcrumb, $objs = array()) {
       ob_end_clean();
     }
   }
+  return $visibility;
 }
 
 /**
