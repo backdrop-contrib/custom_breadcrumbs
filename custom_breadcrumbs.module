@@ -660,8 +660,8 @@ function _custom_breadcrumbs_create_crumb_items($title, $original_path, $attribu
   if (isset($title_parts[1])) {
     $attributes['attributes']['title'] = $title_parts[1];
   }
-  // Collapse double slashes to one.
-  $original_path = preg_replace('/\/+/', '/', $original_path);
+  // Collapse double slashes to one, except after a colon.
+  $original_path = preg_replace('/[^:](\/\/+)/', '/', $original_path);
   // Removing leading and trailing slashes.
   $original_path = preg_replace('/^\/|\/+$/', '', $original_path);
   $path_parts = explode("|", $original_path, 2);
