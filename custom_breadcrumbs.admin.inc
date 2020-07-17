@@ -677,7 +677,7 @@ function custom_breadcrumbs_admin_settings_submit($form, &$form_state) {
 
   // Rebuild the theme registry if custom_breadcrumbs_force_active_trail has
   // changed.
-  if ($form_state['values']['custom_breadcrumbs_force_active_trail'] != $form['adv_settings']['custom_breadcrumbs_force_active_trail']['#default_value']) {
+  if ($form_state['values']['custom_breadcrumbs_force_active_trail'] != $form['adv_settings']['custom_breadcrumbs_experimental']['custom_breadcrumbs_force_active_trail']['#default_value']) {
     drupal_theme_rebuild();
     drupal_set_message(t('The theme registry has been rebuilt'));
   }
