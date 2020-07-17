@@ -809,7 +809,7 @@ function custom_breadcrumbs_load_breadcrumbs($module, $table = NULL, $param = ar
         $result = $query->execute();
         foreach ($result as $breadcrumb) {
           if (!isset($breadcrumb->name)) {
-            $breadcrumb->name = (isset($info['name_constructor'])) ? $info['name_constructor']($breadcrumb) : $breadcrumb->$info['field'];
+            $breadcrumb->name = (isset($info['name_constructor'])) ? $info['name_constructor']($breadcrumb) : $breadcrumb->{$info['field']};
           }
           $breadcrumb->breadcrumb_type = $info['type'];
           $breadcrumbs[] = $breadcrumb;
