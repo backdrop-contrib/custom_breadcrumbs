@@ -446,14 +446,16 @@ function _custom_breadcrumbs_get_breadcrumb($breadcrumb, $objs, &$locations) {
 
   // Use the returned items to set the trail.
   foreach ($items as $item) {
-    if (isset($item['crumb'])) {
-      $trail[] = $item['crumb'];
-    }
-    if (variable_get('custom_breadcrumbs_force_active_trail', FALSE)) {
-      $locations[] = array(
-        'title' => $item['title'],
-        'href' => drupal_get_normal_path(trim($item['href'])),
-      );
+    if (!empty($item)) {
+      if (isset($item['crumb'])) {
+        $trail[] = $item['crumb'];
+      }
+      if (variable_get('custom_breadcrumbs_force_active_trail', FALSE)) {
+        $locations[] = array(
+          'title' => $item['title'],
+          'href' => drupal_get_normal_path(trim($item['href'])),
+        );
+      }
     }
   }
 
