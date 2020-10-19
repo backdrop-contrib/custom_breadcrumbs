@@ -75,10 +75,7 @@ function custom_breadcrumbs_taxonomy_term_form($form, &$form_state, $type) {
       '#default_value' => isset($breadcrumb->paths) ? $breadcrumb->paths : NULL,
     );
   }
-
-  if (module_exists('token')) {
-    $form['help']['tokens']['#token_types'][] = 'term';
-  }
+  $form['help']['tokens']['#token_types'][] = 'term';
 
   $form['#module'] = 'custom_breadcrumbs_taxonomy';
   $form['#infokey'] = 'taxonomy_term';
@@ -151,10 +148,7 @@ function custom_breadcrumbs_taxonomy_vocabulary_form($form, &$form_state, $type)
       '#default_value' => isset($breadcrumb->paths) ? $breadcrumb->paths : NULL,
     );
   }
-
-  if (module_exists('token')) {
-    $form['help']['tokens']['#token_types'][] = 'term';
-  }
+  $form['help']['tokens']['#token_types'][] = 'term';
 
   $form['#module'] = 'custom_breadcrumbs_taxonomy';
   $form['#infokey'] = 'taxonomy_vocabulary';

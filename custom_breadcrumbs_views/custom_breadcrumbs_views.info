@@ -3,10 +3,7 @@ package = Custom breadcrumbs
 dependencies[] = custom_breadcrumbs
 dependencies[] = views
 description = Provides custom breadcrumbs for views pages.
-core = 7.x
-configure = admin/config/user-interface/custom-breadcrumbs
+backdrop = 1.x
+type = module
 
-# @codingStandardsIgnoreLine
-files[] = custom_breadcrumbs_views.install
-# @codingStandardsIgnoreLine
-files[] = custom_breadcrumbs_views.module
+configure = admin/config/user-interface/custom-breadcrumbs

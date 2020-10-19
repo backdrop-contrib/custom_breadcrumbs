@@ -1,0 +1,23 @@
+{
+    "_config_name": "custom_breadcrumbs.settings",
+    "_config_translatables": [
+        "custom_breadcrumb_home"
+    ],
+    "custom_breadcrumb_home": "Home",
+    "custom_breadcrumb_home_link": "<front>",
+    "custom_breadcrumbs_append_page_title": false,
+    "custom_breadcrumbs_append_page_title_no_link": false,
+    "custom_breadcrumbs_set_menu_breadcrumb": false,
+    "custom_breadcrumbs_menu_list": [],
+    "custom_breadcrumbs_set_global_home_breadcrumb": false,
+    "custom_breadcrumbs_use_php_in_titles": false,
+    "custom_breadcrumbs_force_active_trail": false,
+    "custom_breadcrumbs_use_exclude_list": false,
+    "custom_breadcrumbs_exclude_list": "",
+    "custom_breadcrumbs_home_id": false,
+    "custom_breadcrumbs_home_class": false,
+    "custom_breadcrumbs_parts_class": false,
+    "custom_breadcrumbs_even_odd_class": false,
+    "custom_breadcrumbs_type_class": false,
+    "custom_breadcrumbs_append_bid_class": false
+}

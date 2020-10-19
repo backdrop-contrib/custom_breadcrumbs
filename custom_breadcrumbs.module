@@ -12,6 +12,17 @@ define('CUSTOM_BREADCRUMBS_TYPE_FIELDS_WEIGHT', 30);
 define('CUSTOM_BREADCRUMBS_SHOW_FORM_TABLE_DEFAULT', 1);
 
 /**
+ * Implements hook_config_info().
+ */
+function custom_breadcrumbs_config_info() {
+  $prefixes['custom_breadcrumbs.settings'] = array(
+    'label' => t('Custom Breadcrumbs'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
+}
+
+/**
  * Implements hook_cb_breadcrumb_info().
  *
  * @codingStandardsIgnoreStart
@@ -111,7 +122,7 @@ function custom_breadcrumbs_menu() {
 
   $items['admin/structure/custom_breadcrumbs/node/add'] = array(
     'title' => 'Node',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('custom_breadcrumbs_form', 'node'),
     'access arguments' => array('administer custom breadcrumbs'),
     'file' => 'custom_breadcrumbs.admin.inc',
@@ -121,7 +132,7 @@ function custom_breadcrumbs_menu() {
 
   $items['admin/structure/custom_breadcrumbs/node/edit'] = array(
     'title' => 'Edit custom breadcrumb for nodes',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('custom_breadcrumbs_form', 'node'),
     'access arguments' => array('administer custom breadcrumbs'),
     'file' => 'custom_breadcrumbs.admin.inc',
@@ -131,7 +142,7 @@ function custom_breadcrumbs_menu() {
   $items['admin/config/user-interface/custom-breadcrumbs'] = array(
     'title' => 'Custom breadcrumbs settings',
     'description' => 'Manage sitewide configuration settings to customize the breadcrumb trail.',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('custom_breadcrumbs_admin_settings'),
     'access arguments' => array('administer custom breadcrumbs'),
     'file' => 'custom_breadcrumbs.admin.inc',
@@ -146,8 +157,8 @@ function custom_breadcrumbs_menu() {
  */
 function custom_breadcrumbs_preprocess_page(&$variables) {
   if (!custom_breadcrumbs_exclude_path()) {
-    if (variable_get('custom_breadcrumbs_set_global_home_breadcrumb', FALSE)) {
-      $trail = drupal_get_breadcrumb();
+    if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_set_global_home_breadcrumb')) {
+      $trail = backdrop_get_breadcrumb();
       if (!empty($trail) && (strip_tags($trail[0]) == t('Home'))) {
         // Replace the leading Home crumb.
         array_shift($trail);
@@ -155,8 +166,8 @@ function custom_breadcrumbs_preprocess_page(&$variables) {
         if (!empty($cb_home)) {
           array_unshift($trail, array_pop($cb_home));
         }
-        drupal_set_breadcrumb($trail);
-        $variables['breadcrumb'] = theme('breadcrumb', array('breadcrumb' => drupal_get_breadcrumb()));
+        backdrop_set_breadcrumb($trail);
+        $variables['breadcrumb'] = theme('breadcrumb', array('breadcrumb' => backdrop_get_breadcrumb()));
       }
     }
   }
@@ -166,7 +177,7 @@ function custom_breadcrumbs_preprocess_page(&$variables) {
  * Implements hook_init().
  */
 function custom_breadcrumbs_init() {
-  if (variable_get('custom_breadcrumbs_set_menu_breadcrumb', FALSE)) {
+  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_set_menu_breadcrumb')) {
     // Use selected menu structure to set the breadcrumb.
     custom_breadcrumbs_set_menu_breadcrumb();
   }
@@ -198,7 +209,7 @@ function custom_breadcrumbs_help($path, $arg) {
       $output = '<h3>' . t('About') . '</h3>';
       $output .= '<p>' . t("This module allows you to create and modify breadcrumbs based on node type.") . '</p>';
       $output .= '<h3>' . t('Uses') . '</h3>';
-      $output .= '<p>' . t('Create and edit custom breadcrumbs from the <a href="@link">Custom Breadcrumb Administration Page</a>. Select the node type the breadcrumb will apply to. There are two text fields below-- <em>Titles</em> and <em>Paths</em>. When creating  a breadcrumb, you are simply creating a link. In the custom breadcrumbs interface <em>Titles</em> describes the text of the breadcrumb while <em>Paths</em> describes the Drupal path the breadcrumb links to. Each Title must have a corresponding Path.', array('@link' => url('admin/structure/custom_breadcrumbs'))) . '</p>';
+      $output .= '<p>' . t('Create and edit custom breadcrumbs from the <a href="@link">Custom Breadcrumb Administration Page</a>. Select the node type the breadcrumb will apply to. There are two text fields below-- <em>Titles</em> and <em>Paths</em>. When creating  a breadcrumb, you are simply creating a link. In the custom breadcrumbs interface <em>Titles</em> describes the text of the breadcrumb while <em>Paths</em> describes the Backdrop path the breadcrumb links to. Each Title must have a corresponding Path.', array('@link' => url('admin/structure/custom_breadcrumbs'))) . '</p>';
       $output .= '<strong>' . t('Examples') . '</strong>';
       $output .= '<p>' . t("To give a very simple example of how to use this module, let's say I have a blog on my web site called 'Deep Thoughts.' To create this, I use the Views module to create a page at /blog that displays all the node types 'blog post.' Whenever a user views a blog post I want the breadcrumb to show Home > Deep Thoughts instead of simply Home. To do this I would simply type 'Deep Thoughts' in the 'Titles' field and and 'blog' in the 'Paths' field and save my breadcrumb.") . '</p>';
       $output .= '<p>' . t("Using tokens, the Custom breadcrumbs module becomes much more flexible because breadcrumbs can become dynamic. You can create a breadcrumb like Home > Deep Thoughts > [Month of Blog Post] [Year of Blog Post], where 'Deep Thoughts' links to my main blog page and '[Month of Blog Post] [Year of Blog Post]' links to a view that shows only blog posts from the month and year the blog post was created (e.g. June 2007). For this, you would do the following:") . '</p>';
@@ -223,7 +234,7 @@ function custom_breadcrumbs_node_view($node, $build_mode) {
     // Check for breadcrumb for this node type.
     global $language;
     $languages = array(
-      'language' => $language->language,
+      'language' => $language->name,
       'all' => '',
     );
     $breadcrumbs = custom_breadcrumbs_load_breadcrumbs('custom_breadcrumbs', NULL, array('node_type' => $node->type), $languages);
@@ -241,7 +252,7 @@ function custom_breadcrumbs_node_view($node, $build_mode) {
  */
 function custom_breadcrumbs_form_node_form_alter(&$form, $form_state) {
   $node = $form['#node'];
-  if (variable_get('custom_breadcrumbs_show_form_table_' . $node->type, CUSTOM_BREADCRUMBS_SHOW_FORM_TABLE_DEFAULT) &&
+  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_show_form_table_' . $node->type, CUSTOM_BREADCRUMBS_SHOW_FORM_TABLE_DEFAULT) &&
     user_access('administer custom breadcrumbs')) {
 
     // Provide a custom breadcrumbs fieldset for node edit forms.
@@ -300,7 +311,7 @@ function custom_breadcrumbs_form_node_type_form_alter(&$form, $form_state, $form
       '#type' => 'checkbox',
       '#title' => t('Display defined custom breadcrumbs on node edit form'),
       '#description' => t('Access is limited to users with administer custom breadcrumbs permission.'),
-      '#default_value' => variable_get('custom_breadcrumbs_show_form_table_' . $form['#node_type']->type, CUSTOM_BREADCRUMBS_SHOW_FORM_TABLE_DEFAULT),
+      '#default_value' => config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_show_form_table_' . $form['#node_type']->type, CUSTOM_BREADCRUMBS_SHOW_FORM_TABLE_DEFAULT),
     );
   }
 }
@@ -346,10 +357,10 @@ function custom_breadcrumbs_set_breadcrumb($breadcrumb, $objs = array()) {
   if ($breadcrumb && !custom_breadcrumbs_exclude_path()) {
     $locations = array();
     $trail = _custom_breadcrumbs_get_breadcrumb($breadcrumb, $objs, $locations);
-    if (variable_get('custom_breadcrumbs_force_active_trail', FALSE)) {
+    if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_force_active_trail')) {
       menu_set_active_trail($locations);
     }
-    drupal_set_breadcrumb($trail);
+    backdrop_set_breadcrumb($trail);
     // Optionally save the unique breadcrumb id of the last set breadcrumb.
     custom_breadcrumbs_unique_breadcrumb_id($breadcrumb->breadcrumb_type, $breadcrumb->bid);
     return TRUE;
@@ -392,16 +403,16 @@ function _custom_breadcrumbs_get_breadcrumb($breadcrumb, $objs, &$locations) {
   $trail = custom_breadcrumbs_home_crumb();
   if (!empty($trail)) {
     // @codingStandardsIgnoreLine
-    $title = variable_get('custom_breadcrumb_home', t('Home'));
-    $link = variable_get('custom_breadcrumb_home_link', '<front>');
+    $title = config_get('custom_breadcrumbs.settings', 'custom_breadcrumb_home');
+    $link = config_get('custom_breadcrumbs.settings', 'custom_breadcrumb_home_link');
     $locations[] = array(
-      'title' => variable_get('custom_breadcrumb_home', t('Home')),
+      'title' => config_get('custom_breadcrumbs.settings', 'custom_breadcrumb_home', t('Home')),
       'href' => $link,
       'localized_options' => array(),
     );
   }
 
-  if (variable_get('custom_breadcrumbs_use_php_in_titles', FALSE)) {
+  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_use_php_in_titles')) {
     $titles = extract_php($breadcrumb->titles, $objs);
     // Titles and paths arrays can also be provided as elements of an
     // associative array.
@@ -432,9 +443,9 @@ function _custom_breadcrumbs_get_breadcrumb($breadcrumb, $objs, &$locations) {
   }
 
   // Optionally append the page title.
-  if (variable_get('custom_breadcrumbs_append_page_title', FALSE) && !drupal_is_front_page()) {
-    $titles[] = drupal_get_title();
-    if (variable_get('custom_breadcrumbs_append_page_title_no_link', FALSE)) {
+  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_append_page_title') && !backdrop_is_front_page()) {
+    $titles[] = backdrop_get_title();
+    if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_append_page_title_no_link')) {
       $paths[] = '<none>';
     }
     else {
@@ -450,10 +461,10 @@ function _custom_breadcrumbs_get_breadcrumb($breadcrumb, $objs, &$locations) {
       if (isset($item['crumb'])) {
         $trail[] = $item['crumb'];
       }
-      if (variable_get('custom_breadcrumbs_force_active_trail', FALSE)) {
+      if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_force_active_trail')) {
         $locations[] = array(
           'title' => $item['title'],
-          'href' => drupal_get_normal_path(trim($item['href'])),
+          'href' => backdrop_get_normal_path(trim($item['href'])),
         );
       }
     }
@@ -512,11 +523,11 @@ function _custom_breadcrumbs_get_trail_items($breadcrumb, $titles, $paths) {
  */
 function custom_breadcrumbs_unique_breadcrumb_id($type = NULL, $bid = NULL) {
   static $stored_breadcrumb_id;
-  if (variable_get('custom_breadcrumbs_type_class', FALSE)) {
+  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_type_class')) {
     if (isset($type)) {
       $base = 'custom-breadcrumbs';
       $cbid = $base . '-' . $type;
-      if (variable_get('custom_breadcrumbs_append_bid_class', FALSE) && isset($bid)) {
+      if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_append_bid_class') && isset($bid)) {
         $cbid .= '-' . $bid;
       }
       $stored_breadcrumb_id = $cbid;
@@ -578,10 +589,10 @@ function _custom_breadcrumbs_save_breadcrumb($module, $key, $breadcrumb) {
       $breadcrumb->name = $info[$key]['name_constructor']($breadcrumb);
     }
     if (isset($breadcrumb->bid)) {
-      drupal_write_record($info[$key]['table'], $breadcrumb, 'bid');
+      backdrop_write_record($info[$key]['table'], $breadcrumb, 'bid');
     }
     else {
-      drupal_write_record($info[$key]['table'], $breadcrumb);
+      backdrop_write_record($info[$key]['table'], $breadcrumb);
     }
   }
 }
@@ -610,8 +621,8 @@ function _custom_breadcrumbs_delete_breadcrumb($module, $key, $bid) {
  *   The home breadcrumb item.
  */
 function custom_breadcrumbs_home_crumb() {
-  $hometext = variable_get('custom_breadcrumb_home', t('Home'));
-  $homelink = variable_get('custom_breadcrumb_home_link', '<front>');
+  $hometext = config_get('custom_breadcrumbs.settings', 'custom_breadcrumb_home');
+  $homelink = config_get('custom_breadcrumbs.settings', 'custom_breadcrumb_home_link');
   if ($hometext != '') {
     // Add any html identifiers.
     $options = _custom_breadcrumbs_identifiers_option();
@@ -707,7 +718,7 @@ function _custom_breadcrumbs_create_crumb_items($title, $original_path, $attribu
       $path = $original_path;
     }
     if ($path != '<none>') {
-      $options = drupal_parse_url($path);
+      $options = backdrop_parse_url($path);
       $options = array_merge($options, $attributes);
 
       if (!is_array($options)) {
@@ -901,21 +912,21 @@ function custom_breadcrumbs_set_menu_breadcrumb() {
     $menu_id_cache[$ckey] = $menu_link_menus;
   }
   $menu_links = $menu_id_cache[$ckey];
-  $use_menus = variable_get('custom_breadcrumbs_menu_list', array());
+  $use_menus = config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_menu_list');
   foreach ($menu_links as $menu_name) {
     if (in_array($menu_name, $use_menus)) {
       menu_set_active_menu_names($menu_name);
       $breadcrumb = menu_get_active_breadcrumb();
-      if (variable_get('custom_breadcrumbs_append_page_title', FALSE) && !drupal_is_front_page()) {
-        $title = drupal_get_title();
-        if (variable_get('custom_breadcrumbs_append_page_title_no_link', FALSE)) {
+      if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_append_page_title') && !backdrop_is_front_page()) {
+        $title = backdrop_get_title();
+        if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_append_page_title_no_link')) {
           $breadcrumb[] = $title;
         }
         else {
           $breadcrumb[] = l($title, $_GET['q'], array('html' => TRUE));
         }
       }
-      drupal_set_breadcrumb($breadcrumb);
+      backdrop_set_breadcrumb($breadcrumb);
       return TRUE;
     }
   }
@@ -925,10 +936,10 @@ function custom_breadcrumbs_set_menu_breadcrumb() {
  * Implements hook_theme_registry_alter().
  */
 function custom_breadcrumbs_theme_registry_alter(&$theme_registry) {
-  if (variable_get('custom_breadcrumbs_force_active_trail', FALSE) && !empty($theme_registry['links'])) {
+  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_force_active_trail') && !empty($theme_registry['links'])) {
     global $theme;
     // Store the existing theme functions.
-    $themes = variable_get('custom_breadcrumbs_menu_theme', array());
+    $themes = config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_menu_theme');
     $themes[$theme] = array(
       'menu_item' => isset($theme_registry['menu_item']) ? $theme_registry['menu_item']['function'] : "",
       'menu_item_link' => isset($theme_registry['menu_item_link']) ? $theme_registry['menu_item_link']['function'] : "",
@@ -963,7 +974,7 @@ function custom_breadcrumbs_in_active_trail($link) {
     return FALSE;
   }
   foreach ($trail as $step) {
-    if (isset($step['href']) && ($step['href'] == $link['href'] || $step['href'] == drupal_get_path_alias($link['href']))) {
+    if (isset($step['href']) && ($step['href'] == $link['href'] || $step['href'] == backdrop_get_path_alias($link['href']))) {
       return TRUE;
     }
   }
@@ -980,7 +991,7 @@ function custom_breadcrumbs_in_active_trail($link) {
 function custom_breadcrumbs_override_links($links, $attributes = array('class' => 'links')) {
   $output = '';
   if (count($links) > 0) {
-    $output = '<ul' . drupal_attributes($attributes) . '>';
+    $output = '<ul' . backdrop_attributes($attributes) . '>';
 
     $num_links = count($links);
     $i = 1;
@@ -996,13 +1007,13 @@ function custom_breadcrumbs_override_links($links, $attributes = array('class' =
       if ($i == $num_links) {
         $class .= ' last';
       }
-      if (isset($link['href']) && ($link['href'] == $_GET['q'] || ($link['href'] == '<front>' && drupal_is_front_page()))) {
+      if (isset($link['href']) && ($link['href'] == $_GET['q'] || ($link['href'] == '<front>' && backdrop_is_front_page()))) {
         $class .= ' active';
       }
       if (custom_breadcrumbs_in_active_trail($link) && ($link['href'] != '<front>')) {
         $class .= ' active-trail';
       }
-      $output .= '<li' . drupal_attributes(array('class' => $class)) . '>';
+      $output .= '<li' . backdrop_attributes(array('class' => $class)) . '>';
 
       if (isset($link['href'])) {
         // Pass in $link as $options, they share the same keys.
@@ -1016,7 +1027,7 @@ function custom_breadcrumbs_override_links($links, $attributes = array('class' =
         }
         $span_attributes = '';
         if (isset($link['attributes'])) {
-          $span_attributes = drupal_attributes($link['attributes']);
+          $span_attributes = backdrop_attributes($link['attributes']);
         }
         $output .= '<span' . $span_attributes . '>' . $link['title'] . '</span>';
       }
@@ -1049,7 +1060,7 @@ function custom_breadcrumbs_theme_menu_item_link($link) {
   global $theme;
   static $function;
   if (!isset($function)) {
-    $registry = variable_get('custom_breadcrumbs_menu_theme', array());
+    $registry = config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_menu_theme');
     $function = isset($registry[$theme]) ? $registry[$theme]['menu_item_link'] : 'theme_menu_item_link';
   }
 
@@ -1079,7 +1090,7 @@ function custom_breadcrumbs_theme_menu_item($link, $has_children, $menu = '', $i
   static $function;
 
   if (!isset($function)) {
-    $registry = variable_get('custom_breadcrumbs_menu_theme', array());
+    $registry = config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_menu_theme', array());
     $function = isset($registry[$theme]) ? $registry[$theme]['menu_item'] : 'theme_menu_item';
   }
 
@@ -1262,8 +1273,7 @@ function _custom_breadcrumbs_get_module_weight($names) {
   $weights = array();
   $query = db_select('system', 's')->fields('s', array('name', 'weight'))->condition('name', $names, 'IN')->condition('status', 1)->orderBy('weight', 'ASC');
   $results = $query->execute();
-  // @codingStandardsIgnoreLine
-  // $results = db_query("SELECT name, weight FROM {system} WHERE name IN (" . db_placeholders($names, 'text') . ") AND status = 1 ORDER BY weight ASC", $names);.
+
   foreach ($results as $row) {
     $weights[$row->name] = (int) $row->weight;
   }
@@ -1288,7 +1298,7 @@ function _custom_breadcrumbs_get_module_weight($names) {
  */
 function extract_php($text, $objs = array()) {
   // @codingStandardsIgnoreEnd
-  if (drupal_substr(trim($text), 0, 5) == '<?php') {
+  if (backdrop_substr(trim($text), 0, 5) == '<?php') {
     // Strip php tags.
     $text = str_replace(array('<?php', '?>'), '', $text);
     foreach ($objs as $key => $obj) {
@@ -1312,9 +1322,9 @@ function extract_php($text, $objs = array()) {
  */
 function custom_breadcrumbs_exclude_path() {
   static $excluded;
-  if (variable_get('custom_breadcrumbs_use_exclude_list', FALSE)) {
+  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_use_exclude_list')) {
     if (!isset($excluded)) {
-      $excluded = explode(',', variable_get('custom_breadcrumbs_exclude_list', ''));
+      $excluded = explode(',', config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_exclude_list'));
     }
     if (!empty($excluded)) {
       module_load_include('inc', 'custom_breadcrumbs', 'custom_breadcrumbs_common');
@@ -1343,16 +1353,16 @@ function custom_breadcrumbs_exclude_path() {
 function _custom_breadcrumbs_identifiers_option($part = 0, $bid = NULL) {
   $options = array('attributes' => array());
   $base = 'custom-breadcrumbs';
-  if (variable_get('custom_breadcrumbs_home_class', FALSE) && ($part == 0)) {
+  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_home_class') && ($part == 0)) {
     $options['attributes']['class'][] = $base . '-home';
   }
-  if (variable_get('custom_breadcrumbs_home_id', FALSE) && ($part == 0)) {
+  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_home_id') && ($part == 0)) {
     $options['attributes']['id'] = $base . '-home';
   }
-  elseif (variable_get('custom_breadcrumbs_parts_class', FALSE) && ($part > 0)) {
+  elseif (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_parts_class') && ($part > 0)) {
     $options['attributes']['class'][] = $base . '-item-' . $part;
   }
-  if (variable_get('custom_breadcrumbs_even_odd_class', FALSE)) {
+  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_even_odd_class')) {
     $options['attributes']['class'][] = ($part % 2 == 0) ? 'even' : 'odd';
   }
 

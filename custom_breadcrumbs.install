@@ -67,154 +67,64 @@ function custom_breadcrumbs_schema() {
 }
 
 /**
- * Implements hook_uninstall().
+ * Implements hook_update_last_removed().
  */
-function custom_breadcrumbs_uninstall() {
-  // Remove persistent variables.
-  db_delete('variable')
-    ->condition('name', 'custom_breadcrumbs_%', 'like')
-    ->execute();
+function custom_breadcrumbs_update_last_removed() {
+  return 7001;
 }
 
 /**
- * Update old-style tokens from early versions of token.module.
+ * @defgroup updates-7.x-to-1.x Updates from 7.x to 1.x
+ * @{
+ * Update functions from Drupal 7.x to Backdrop CMS 1.x.
  */
-function custom_breadcrumbs_update_1() {
-  $stuff = array(
-    '%author_id'      => '[author-uid]',
-    '%author_name'    => '[author-name]',
-    '%user_id'        => '[user-id]',
-    '%user_name'      => '[user-name]',
-    '%node_id'        => '[nid]',
-    '%node_type'      => '[type]',
-    '%node_type_name' => '[type-name]',
-    '%top_term'       => '[term]',
-    '%top_tname'      => '[term-id]',
-    '%created_d'      => '[dd]',
-    '%created_D'      => '[ddd]',
-    '%created_j'      => '[d]',
-    '%created_l'      => '[day]',
-    '%created_F'      => '[month]',
-    '%created_m'      => '[mm]',
-    '%created_M'      => '[mon]',
-    '%created_n'      => '[m]',
-    '%created_y'      => '[yy]',
-    '%created_Y'      => '[yyyy]',
-  );
 
-  $search = array_keys($stuff);
-  $replace = array_values($stuff);
+/**
+ * Move custom breadcrumbs settings from variables to config.
+ */
+function custom_breadcrumbs_update_1000() {
+  // Migrate variables to config.
+  $config = config('custom_breadcrumbs.settings');
+  $config->set('custom_breadcrumb_home', update_variable_get('custom_breadcrumb_home', 'Home'));
+  $config->set('custom_breadcrumb_home_link', update_variable_get('custom_breadcrumb_home_link', '<front>'));
+  $config->set('custom_breadcrumbs_append_page_title', update_variable_get('custom_breadcrumbs_append_page_title', FALSE));
+  $config->set('custom_breadcrumbs_append_page_title_no_link', update_variable_get('custom_breadcrumbs_append_page_title_no_link', FALSE));
+  $config->set('custom_breadcrumbs_set_menu_breadcrumb', update_variable_get('custom_breadcrumbs_set_menu_breadcrumb', FALSE));
+  $config->set('custom_breadcrumbs_menu_list', update_variable_get('custom_breadcrumbs_menu_list', array()));
+  $config->set('custom_breadcrumbs_set_global_home_breadcrumb', update_variable_get('custom_breadcrumbs_set_global_home_breadcrumb', FALSE));
+  $config->set('custom_breadcrumbs_use_php_in_titles', update_variable_get('custom_breadcrumbs_use_php_in_titles', FALSE));
+  $config->set('custom_breadcrumbs_force_active_trail', update_variable_get('custom_breadcrumbs_force_active_trail', FALSE));
+  $config->set('custom_breadcrumbs_use_exclude_list', update_variable_get('custom_breadcrumbs_use_exclude_list', FALSE));
+  $config->set('custom_breadcrumbs_exclude_list', update_variable_get('custom_breadcrumbs_exclude_list', ""));
+  $config->set('custom_breadcrumbs_home_id', update_variable_get('custom_breadcrumbs_home_id', FALSE));
+  $config->set('custom_breadcrumbs_home_class', update_variable_get('custom_breadcrumbs_home_class', FALSE));
+  $config->set('custom_breadcrumbs_parts_class', update_variable_get('custom_breadcrumbs_parts_class', FALSE));
+  $config->set('custom_breadcrumbs_even_odd_class', update_variable_get('custom_breadcrumbs_even_odd_class', FALSE));
+  $config->set('custom_breadcrumbs_type_class', update_variable_get('custom_breadcrumbs_type_class', FALSE));
+  $config->set('custom_breadcrumbs_append_bid_class', update_variable_get('custom_breadcrumbs_append_bid_class', FALSE));
+  $config->save();
 
-  $result = db_query("SELECT * FROM {custom_breadcrumb}")->execute();
-  foreach ($result as $crumb) {
-    $crumb->titles = str_replace($search, $replace, $crumb->titles);
-    $crumb->paths = str_replace($search, $replace, $crumb->paths);
-    _custom_breadcrumbs_save_breadcrumb('custom_breadcrumb', $crumb);
-  }
-
-  return t('Custom Breadcrumb replacement strings updated for use with Token module.');
+  // Delete variables.
+  update_variable_del('custom_breadcrumb_home');
+  update_variable_del('custom_breadcrumb_home_link');
+  update_variable_del('custom_breadcrumbs_append_page_title');
+  update_variable_del('custom_breadcrumbs_append_page_title_no_link');
+  update_variable_del('custom_breadcrumbs_set_menu_breadcrumb');
+  update_variable_del('custom_breadcrumbs_menu_list');
+  update_variable_del('custom_breadcrumbs_set_global_home_breadcrumb');
+  update_variable_del('custom_breadcrumbs_use_php_in_titles');
+  update_variable_del('custom_breadcrumbs_force_active_trail');
+  update_variable_del('custom_breadcrumbs_use_exclude_list');
+  update_variable_del('custom_breadcrumbs_exclude_list');
+  update_variable_del('custom_breadcrumbs_home_id');
+  update_variable_del('custom_breadcrumbs_home_class');
+  update_variable_del('custom_breadcrumbs_parts_class');
+  update_variable_del('custom_breadcrumbs_even_odd_class');
+  update_variable_del('custom_breadcrumbs_type_class');
+  update_variable_del('custom_breadcrumbs_append_bid_class');
 }
 
 /**
- * Add a visibility_php field.
+ * @} End of "defgroup updates-7.x-to-1.x"
+ * The next series of updates should start at 2000.
  */
-function custom_breadcrumbs_update_2() {
-  db_add_column('custom_breadcrumb', 'visibility_php', 'text', array('not null' => TRUE, 'default' => "''"));
-  return t('Added a visibility_php field to the custom_breadcrumb database table.');
-}
-
-/**
- * Implements hook_update_N().
- *
- * Ensure this module's weight is larger than other modules, like views, so
- * custom breadcrumbs page callback is used.
- */
-function custom_breadcrumbs_update_3() {
-  db_update('system')
-    ->fields(array('weight' => 12))
-    ->condition('type', 'module')
-    ->condition('name', 'custom_breadcrumbs')
-    ->execute();
-  return t('Adjusted the custom_ breadcrumbs module weight.');
-}
-
-/**
- * Add the menu flag.
- */
-function custom_breadcrumbs_update_6001() {
-  db_add_field('custom_breadcrumb', 'set_active_menu', array(
-    'type' => 'int',
-    'default' => 1,
-    'NOT NULL' => TRUE,
-  ));
-  return t('Added set_active_menu flag to custom_breadcrumb database table.');
-}
-
-/**
- * Remove the set_active_menu field because it is no longer used.
- */
-function custom_breadcrumbs_update_6101() {
-  db_drop_field('custom_breadcrumb', 'set_active_menu');
-  return t('Removed the set_active_menu field from custom breadcrumb database table because it is no longer used.');
-}
-
-/**
- * Adds language support to breadcrumbs.
- */
-function custom_breadcrumbs_update_6200() {
-  db_add_field('custom_breadcrumb', 'language', array(
-    'type' => 'varchar',
-    'length' => 12,
-    'not null' => TRUE,
-    'default' => '',
-  ));
-  return t('Added language field to custom_breadcrumb database table.');
-}
-
-/**
- * Adds indices to custom_breadcrumb table to improve performance.
- */
-function custom_breadcrumbs_update_6201() {
-  db_add_index('custom_breadcrumb', 'language', array('language'));
-  db_add_index('custom_breadcrumb', 'node_language', array('node_type', 'language'));
-  return t('Added indices to custom_breadcrumb table to improve performance.');
-}
-
-/**
- * Adds name field for improved organization of breadcrumbs.
- */
-function custom_breadcrumbs_update_6202() {
-  db_add_field('custom_breadcrumb', 'name', array(
-    'type' => 'varchar',
-    'length' => 128,
-    'NOT NULL' => FALSE,
-    'description' => 'An optional name for the custom breadcrumb.',
-  ));
-  return t('Added name field for improved organization of custom breadcrumbs.');
-}
-
-/**
- * Enables custom_breadcrumbs_identifiers for legacy.
- */
-function custom_breadcrumbs_update_6203() {
-  module_enable(array('custom_breadcrumbs_identifiers'));
-  return t('Custom_breadcrumbs_identifiers was enabled for legacy reasons. Please disable it if you do not need special identifiers in your breadcrumb settings.');
-}
-
-/**
- * Change the titles and paths fields to fit longer text.
- */
-function custom_breadcrumbs_update_7001() {
-  db_change_field('custom_breadcrumb', 'titles', 'titles', array(
-    'type' => 'text',
-    'size' => 'medium',
-    'not null' => TRUE,
-    'description' => 'A return-delimited list of titles for the breadcrumb links.',
-  ));
-  db_change_field('custom_breadcrumb', 'paths', 'paths', array(
-    'type' => 'text',
-    'size' => 'medium',
-    'not null' => TRUE,
-    'description' => 'A return-delimited list of url paths for the breadcrumb links.',
-  ));
-}

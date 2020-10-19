@@ -1,19 +1,21 @@
+Custom Breadcrumbs
+==================
+
 CONTENTS OF THIS FILE
 ---------------------
 
- * Introduction
- * Requirements
- * Installation
- * Summary
- * New Features
- * User Interface
- * Languages
- * HOME breadcrumb
- * Use PHP in breadcrumb titles and paths
- * Add CSS classes to custom breadcrumb elements
- * Special Identifiers
- * Maintainers
-
+* Introduction
+* Requirements
+* Installation
+* Summary
+* New Features
+* User Interface
+* Languages
+* HOME breadcrumb
+* Use PHP in breadcrumb titles and paths
+* Add CSS classes to custom breadcrumb elements
+* Special Identifiers
+* Maintainers
 
 INTRODUCTION
 ------------
@@ -21,27 +23,26 @@ INTRODUCTION
 Allows administrators to set up parametrized breadcrumb trails for any node
 type.
 
-
 SUMMARY
 -------
 
- * Enable the module and any option submodules (see below for details)
- * Assign 'administer custom breadcrumbs' permission to those roles that should
+* Enable the module and any option submodules (see below for details)
+* Assign 'administer custom breadcrumbs' permission to those roles that should
    be allowed to add/edit/delete custom breadcrumbs.
- * Assign 'use php in custom breadcrumbs' to roles that should be allowed to use
+* Assign 'use php in custom breadcrumbs' to roles that should be allowed to use
    php to determine breadcrumb visibility.
- * Go to Configuration > User Interface > Custom breadcrumbs Settings to select
+* Go to Configuration > User Interface > Custom breadcrumbs Settings to select
    the 'Home' breacrumb text and possibly other global settings.
- * Don't forget the breadcrumb settings (if any) at the
+* Don't forget the breadcrumb settings (if any) at the
    admin/appearance/settings/[THEME] page!
- * Go to Structure > Custom breadcrumbs to add new breadcrumbs
- * To add a breadcrumb, click on one of the tabs at the top of the page. For
+* Go to Structure > Custom breadcrumbs to add new breadcrumbs
+* To add a breadcrumb, click on one of the tabs at the top of the page. For
    example, click 'Node' to create a custom breadcrumb based on node type.
- * Fill in the required information for the breadcrumb (varies depending on
+* Fill in the required information for the breadcrumb (varies depending on
    breadcrumb type, see below).
- * For the titles, put each "crumb" one line after another (There is no need to
+* For the titles, put each "crumb" one line after another (There is no need to
    put in "home")
- * (optional) For each crumb title you can specify a title attribute ("tooltip")
+* (optional) For each crumb title you can specify a title attribute ("tooltip")
    to add to the link. Separate the crumb title and the title attribute with a
    pipe (|) symbol:
 
@@ -49,16 +50,15 @@ SUMMARY
    SubItem A|Title attribute for SubItemA (optional)
    SuperSubItem X
 
- * For the paths, put the path to each crumb starting after the domain name.
+* For the paths, put the path to each crumb starting after the domain name.
    Don't include a leading or trailing slash.
 
    item1
    item-1/subitem-a
    item-1/subitem-a/supersubitem-x
 
- * Click save to save the breadcrumb
- * Visit the page and your breadcrumb should appear!
-
+* Click save to save the breadcrumb
+* Visit the page and your breadcrumb should appear!
 
 NEW FEATURES
 ------------
@@ -70,7 +70,7 @@ module handles custom breadcrumbs based on node type as described above. The
 following optional modules can also be installed to provide custom breadcrumbs
 in a variety of situations:
 
- * custom_breadcrumbs_views provides custom breadcrumbs on views pages.
+* custom_breadcrumbs_views provides custom breadcrumbs on views pages.
    Once this module is enabled, a new "Views" tab will appear at
    admin/structure/custom_breadcrumbs. To add a views page breadcrumb, click on
    the tab and then select the view from list of available views. Fill in the
@@ -79,7 +79,7 @@ in a variety of situations:
    with global and user tokens only. The $view object is available for use in
    the php_visibility section.
 
- * custom_breadcrumbs_paths provides custom breadcrumbs on nodes and views at
+* custom_breadcrumbs_paths provides custom breadcrumbs on nodes and views at
    a specified path (url). Once this module is enabled, a new "Path" tab will
    appear at admin/structure/custom_breadcrumbs.  To add a breadcrumb for a node
    or a view at a specific path, just enter the Drupal path in the Specific
@@ -98,7 +98,7 @@ in a variety of situations:
    path/to/some/content and breadcrumbs have been defined for path/to/* and
    path/to/some/*, the latter will be chosen as the best match.
 
- * custom_breadcrumbs_taxonomy provides custom breadcrumbs on taxonomy term
+* custom_breadcrumbs_taxonomy provides custom breadcrumbs on taxonomy term
    pages, views, and for nodes that are assigned a taxonomy vocabulary or term.
    Once this module is enabled, two new tabs will appear appear at
    admin/structure/custom_breadcrumbs: Term and Vocabulary. Breadcrumb
@@ -138,7 +138,7 @@ in a variety of situations:
    using views to override taxonomy term pages, then be sure to enable the
    "Use taxonomy breadcrumbs for views" option.
 
- * custom_breadcrumbsapi provides a simple api that allows custom breadcrumbs to
+* custom_breadcrumbsapi provides a simple api that allows custom breadcrumbs to
    be defined for module pages implementing the api. Module developers need to
    provide a modulename_custom_breadcrumbsapi() function that returns an array
    containing the names of the module pages for which custom breadcrumbs may be
@@ -146,6 +146,7 @@ in a variety of situations:
 
    The following is an example that could be used with the forum module.
 
+```php
    /**
     *  Implementation of hook_custom_breadcrumbsapi().
     *  Allow custom breadcrumbs for the following module pages.
@@ -153,6 +154,7 @@ in a variety of situations:
    function forum_custom_breadcrumbsapi() {
      return array('forum listing');
    }
+```
 
    Then, in the callback functions for each of those pages, the following line
    must be inserted within the function (preferably after defining $breadcrumb
@@ -176,7 +178,6 @@ in a variety of situations:
    details. For example, if a template file uses the variable $foo, then
    access to that variable would be through $variables['foo'].
 
-
 USER INTERFACE
 --------------
 
@@ -193,14 +194,12 @@ edit each.  If no breadcrumbs have been defined for a particular node, then a
 link can be followed back to admin/structure/custom_breacrumbs to add a custom
 breadcrumb.
 
-
 LANGUAGES
 ---------
 
 If the core Locale module is enabled, then an additional option to specify the
 language for the breadcrumb is available when constructing the breadcrumb trail
 (with any of the custom breadcrumb modules).
-
 
 HOME BREADCRUMB
 ---------------
@@ -219,16 +218,17 @@ setting and then leave the home breadcrumb text blank.
 It is possible to translate the home reference title from custom breadcrumbs
 using the i18n module. Just put this in your settings.php:
 
+```php
   $conf['i18n_variables'] = array(
     //custom breadcrumbs
     'custom_breadcrumb_home',
   );
+```
 
 Then you can change it for each language at
-http://example.com/#lang-prefix#/admin/settings/custom-breadcrumbs.
+<http://example.com/#lang-prefix#/admin/settings/custom-breadcrumbs>.
 
-See http://drupal.org/node/313272 for additional information.
-
+See <http://drupal.org/node/313272> for additional information.
 
 USE PHP IN BREADCRUMB TITLES AND PATHS
 --------------------------------------
@@ -244,10 +244,10 @@ return an array of breadcrumb titles in the titles text field and a
 corresponding array of breadcrumb paths in the paths text field such as
 
 Titles:
-<?php return array('title-1', 'title-2', 'title-3');?>
+`<?php return array('title-1', 'title-2', 'title-3');?>`
 
 Paths:
-<?php return array('path/to/title-1', 'path/to/title-2', 'path/to/title-3');?>
+`<?php return array('path/to/title-1', 'path/to/title-2', 'path/to/title-3');?>`
 
 Sometimes, it may be more convient to assign the titles and paths in the same
 code snippet, so you can also return an associate array with elements 'titles'
@@ -255,9 +255,12 @@ and 'paths' that contain the titles and paths arrays, respectively.
 For example,
 
 Titles:
+
+```php
 <?php $titles = array('title-1', 'title-2', 'title-3');
 $paths = array('path/to/title-1', 'path/to/title-2', 'path/to/title-3');
 return array('titles' => $titles, 'paths' => $paths); ?>
+```
 
 (In this case, the paths text field will be ignored, so you can leave it
 empty).
@@ -271,8 +274,7 @@ breadcrumb.
 For longer code snippets (greater than 250 characters), you can save your code
 snippet in an include file and use a php require_once statement in the titles
 and/or paths section of your custom breadcrumb to include and evaluate your
-code. See http://drupal.org/node/654766 for an example of this.
-
+code. See <http://drupal.org/node/654766> for an example of this.
 
 ADD CSS CLASSES TO CUSTOM BREADCRUMB ELEMENTS
 ---------------------------------------------
@@ -290,9 +292,8 @@ The class name is returned as a string by the function
 custom_breadcrumbs_unique_breadcrumb_id(). The identifier will be of the form
 'custom-breadcrumbs-type-id'where type is the breadcrumb type (node, panels,
 path, views or taxonomy) and id is the breadcrumb id number.
-See http://drupal.org/node/643796#comment-2532998 for more information on this
+See <http://drupal.org/node/643796#comment-2532998> for more information on this
 feature.
-
 
 SPECIAL IDENTIFIERS
 -------------------
@@ -301,19 +302,19 @@ In Custom Breadcrumbs 2.0, Special identifiers are now provided as a separate,
 optional module - custom_breadcrumbs_identifiers. At present, this module
 provides the following identifiers:
 
-<none>              - Produces a plain text crumb. This identifier should not
+`<none>`              - Produces a plain text crumb. This identifier should not
                       be used with the pipe (|) symbol.
-<pathauto>          - Cleans the given path using your pathauto replacement
+`<pathauto>`          - Cleans the given path using your pathauto replacement
                       rules.
-<book-hierarchy>    - Provides crumbs for each parent node of a book page.
+`<book-hierarchy>`    - Provides crumbs for each parent node of a book page.
                       Whatever is placed in the corresponding position of the
                       title area will be ignored. It should not be used with
                       the pipe (|) symbol.
-<page-title>        - Provides a plain text crumb using the page title. Whatever
+`<page-title>`        - Provides a plain text crumb using the page title. Whatever
                       is placed in the corresponding position of the title area
                       will be ignored. It should not be used with the pipe (|)
                       symbol.
-<menu-parent-trail> - Produces crumbs for each parent item for the given path.
+`<menu-parent-trail>` - Produces crumbs for each parent item for the given path.
                       The title information for this line will be ignored
                       because the menu link titles are used. If a path is not
                       provided following the pipe (|) symbol, the current path
@@ -329,7 +330,7 @@ Identifiers should be added to the paths area in the following format:
 identifier|path. To be recognized, the identifier must be enclosed in angular
 brackets, and proceed any part of the path:
 
-For example: <pathauto>|[ogname-raw]
+For example: `<pathauto>|[ogname-raw]`
 
 Note that not all identifiers require the use of |path.
 
@@ -337,9 +338,10 @@ SUPPORT SCHEMA.ORG
 ------------------
 
 Add code bellow to your theme into the file template.php and edit the name for the function "YOUR_THEME_NAME_breadcrumb".
-Clean cache on the site. Structure for breadcrumbs will become like here http://schema.org/BreadcrumbList.
-You can check structure here https://search.google.com/structured-data/testing-tool/u/0/
+Clean cache on the site. Structure for breadcrumbs will become like here <http://schema.org/BreadcrumbList>.
+You can check structure here <https://search.google.com/structured-data/testing-tool/u/0/>
 
+```php
 /**
  * Return a themed breadcrumb trail.
  *
@@ -392,31 +394,30 @@ function YOUR_THEME_NAME_breadcrumb($variables) {
 
   return $output;
 }
-
+```
 
 REQUIREMENTS
 ------------
 
 No special requirements
 
-
 INSTALLATION
 ------------
 
 Install as you would normally install a contributed Drupal module. See:
-https://drupal.org/documentation/install/modules-themes/modules-7 for further
+<https://drupal.org/documentation/install/modules-themes/modules-7> for further
 information.
-
 
 MAINTAINERS
 -----------
 
 Current maintainers:
- * Colan Schwartz (colan) - https://www.drupal.org/user/58704
- * Renato Gonçalves (RenatoG) - https://www.drupal.org/user/3326031
- * MGN - https://www.drupal.org/user/321760
- * thePanz - https://www.drupal.org/user/58689
- * bennybobw
- * dbabbage
- * Michelle
- * MGN
+
+* Colan Schwartz (colan) <https://www.drupal.org/user/58704>
+* Renato Gonçalves (RenatoG) <https://www.drupal.org/user/3326031>
+* MGN - <https://www.drupal.org/user/321760>
+* thePanz - <https://www.drupal.org/user/58689>
+* bennybobw
+* dbabbage
+* Michelle
+* MGN

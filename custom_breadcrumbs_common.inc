@@ -9,7 +9,7 @@
  * Determines if two paths match, allowing for wildcards and aliases.
  *
  * @param string $curpath
- *   The current Drupal path.
+ *   The current Backdrop path.
  * @param string $breadcrumb_path
  *   The path that the breadcrumb applies to.
  *
@@ -18,11 +18,11 @@
  */
 function _custom_breadcrumbs_match_path($curpath, $breadcrumb_path) {
 
-  $path = drupal_get_path_alias($curpath);
+  $path = backdrop_get_path_alias($curpath);
   // Compare with the internal and path alias (if any).
-  $page_match = drupal_match_path(drupal_strtolower($path), drupal_strtolower($breadcrumb_path));
+  $page_match = backdrop_match_path(backdrop_strtolower($path), backdrop_strtolower($breadcrumb_path));
   if ($path != $curpath) {
-    $page_match = $page_match || drupal_match_path(drupal_strtolower($curpath), drupal_strtolower($breadcrumb_path));
+    $page_match = $page_match || backdrop_match_path(backdrop_strtolower($curpath), backdrop_strtolower($breadcrumb_path));
   }
   return $page_match;
 }
@@ -109,14 +109,14 @@ function _custom_breadcrumbs_views_parse_args($arguments, $viewargs) {
   foreach ($arguments as $arg_id => $argument) {
     if (!empty($viewargs)) {
       $arg = array_shift($viewargs);
-      $arg_id_3 = drupal_substr($arg_id, 0, 3);
-      if (($arg_id_3 == 'tid') || (drupal_substr($arg_id, 0, 19) == 'term_node_tid_depth')) {
+      $arg_id_3 = backdrop_substr($arg_id, 0, 3);
+      if (($arg_id_3 == 'tid') || (backdrop_substr($arg_id, 0, 19) == 'term_node_tid_depth')) {
         $terms = custom_breadcrumbs_taxonomy_terms_parse_string($arg);
         $arg_values['types'][] = 'tid';
         $arg_values['values'][] = empty($terms['tids']) ? NULL : $terms['tids'][0];
       }
-      elseif (drupal_substr($arg_id, 0, 4) == 'name') {
-        if (drupal_substr($argument['table'], 0, 5) == 'term_') {
+      elseif (backdrop_substr($arg_id, 0, 4) == 'name') {
+        if (backdrop_substr($argument['table'], 0, 5) == 'term_') {
           $terms = taxonomy_get_term_by_name($arg);
           $arg_values['types'][] = 'tid';
           $arg_values['values'][] = empty($terms) ? NULL : $terms[0]->tid;

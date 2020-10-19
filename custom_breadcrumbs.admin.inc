@@ -9,7 +9,7 @@
  * Lists all current custom breadcrumbs and provides a link to the edit page.
  */
 function custom_breadcrumbs_page() {
-  $custom_breadcrumbs_sort = variable_get('custom_breadcrumbs_sort', array(
+  $custom_breadcrumbs_sort = state_get('custom_breadcrumbs_sort', array(
     'direction' => array(
       'name' => 'asc',
       'breadcrumb_type' => 'asc',
@@ -61,7 +61,7 @@ function custom_breadcrumbs_page() {
   }
   $order = (isset($_GET['order']) && in_array($_GET['order'], array_keys($columns))) ? $_GET['order'] : 'name';
   $sort[$order] = (isset($_GET['sort']) && ($_GET['sort'] == 'desc')) ? 'desc' : 'asc';
-  variable_set('custom_breadcrumbs_sort', array('direction' => $sort, 'column' => $order));
+  state_set('custom_breadcrumbs_sort', array('direction' => $sort, 'column' => $order));
   usort($breadcrumbs, '_custom_breadcrumbs_sort_cmp');
 
   // Make the breadcrumb list table sortable by name, type and language.
@@ -105,13 +105,12 @@ function custom_breadcrumbs_page() {
     ),
     );
   }
-  // Prepare help text for this page. Not sure why this doesn't work in
-  // hook_help().
+  // Prepare help text for this page.
   $output = '<p>' . t("To create a custom breadcrumb, choose one of the breadcrumb types listed above. The following table lists all of the custom breadcrumbs that have been defined. The list can be filtered by breadcrumb type or language, or sorted by clicking on one of the column headings.") . '</p>';
   $output .= '<p>' . t('You can configure Custom Breadcrumb settings at <a href="@link">admin/config/user-interface/custom-breadcrumbs</a>.', array('@link' => url('admin/config/user-interface/custom-breadcrumbs'))) . '</p>';
   $build = array();
   $build['help_text'] = array('#markup' => $output);
-  $build['filter_form'] = drupal_get_form('custom_breadcrumbs_filter_form');
+  $build['filter_form'] = backdrop_get_form('custom_breadcrumbs_filter_form');
   $build['breadcrumb_table'] = array(
     '#markup' => theme('table', array(
       'header' => $headers,
@@ -138,7 +137,7 @@ function custom_breadcrumbs_page() {
  *   -1 if the second object is greater than the first,
  */
 function _custom_breadcrumbs_sort_cmp($bc1, $bc2) {
-  $custom_breadcrumbs_sort = variable_get('custom_breadcrumbs_sort', array(
+  $custom_breadcrumbs_sort = config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_sort', array(
     'direction' => array(
       'name' => 'asc',
       'breadcrumb_type' => 'asc',
@@ -187,12 +186,12 @@ function custom_breadcrumbs_form($form, &$form_state, $type) {
   $breadcrumb = NULL;
   $bid = arg(5);
   if (isset($bid)) {
-    drupal_set_title(t('Edit Custom Breadcrumb for Node'));
+    backdrop_set_title(t('Edit Custom Breadcrumb for Node'));
     $breadcrumbs = custom_breadcrumbs_load_breadcrumbs('custom_breadcrumbs', NULL, array('bid' => $bid));
     $breadcrumb = array_pop($breadcrumbs);
   }
   else {
-    drupal_set_title(t('Add Custom Breadcrumb for Node'));
+    backdrop_set_title(t('Add Custom Breadcrumb for Node'));
   }
   $options = array();
   foreach (node_type_get_names() as $type => $name) {
@@ -224,7 +223,7 @@ function custom_breadcrumbs_form($form, &$form_state, $type) {
 function custom_breadcrumbs_form_validate($form, &$form_state) {
   // Check to make sure there are an equal number of paths and titles.
   $check = TRUE;
-  if (!user_access('use php in custom breadcrumbs') || !variable_get('custom_breadcrumbs_use_php_in_titles', FALSE)) {
+  if (!user_access('use php in custom breadcrumbs') || !config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_use_php_in_titles')) {
     // Strip any PHP tags from paths and titles since they are not allowed.
     $elements = array('titles', 'paths');
     foreach ($elements as $element) {
@@ -340,7 +339,7 @@ function custom_breadcrumbs_common_form_elements($bid, $breadcrumb) {
   );
 
   $description = t('A list of titles for the breadcrumb links, one on each line. For each crumb title you can also specify a title attribute to add to the link. Separate the crumb title and the title attribute with a pipe (|) symbol.');
-  if (variable_get('custom_breadcrumbs_use_php_in_titles', FALSE) && user_access('use php in custom breadcrumbs')) {
+  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_use_php_in_titles') && user_access('use php in custom breadcrumbs')) {
     $description .= ' ' . t("Or, you can enter a small PHP code snippet (less than 250 characters) returning either an array of text strings for the breadcrumb titles, with one title per array element, or an associative array with elements 'titles' and 'paths' each containing an array of text strings for the breadcrumb titles and paths, respectively. Include the snippet between %php. Use with caution since incorrect PHP code can break your Drupal site. Token replacement will occur after any PHP is evaluated.", array('%php' => '<?php ?>'));
   }
 
@@ -353,7 +352,7 @@ function custom_breadcrumbs_common_form_elements($bid, $breadcrumb) {
   );
 
   $description = t('A list of Drupal paths for the breadcrumb links, one on each line.');
-  if (variable_get('custom_breadcrumbs_use_php_in_titles', FALSE) && user_access('use php in custom breadcrumbs')) {
+  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_use_php_in_titles') && user_access('use php in custom breadcrumbs')) {
     $description .= ' ' . t("You can also enter a small PHP code snippet (less than 250 characters) returning an array of drupal paths for the breadcrumb links, with one path per array element. Include the snippet between %php. Use with caution since incorrect PHP code can break your Drupal site. Token replacement will occur after any PHP is evaluated.", array('%php' => '<?php ?>'));
   }
   $form['paths'] = array(
@@ -370,18 +369,10 @@ function custom_breadcrumbs_common_form_elements($bid, $breadcrumb) {
     '#title' => t('Placeholder tokens'),
     '#description' => t("The following placeholder tokens can be used in both paths and titles. When used in a path or title, they will be replaced with the appropriate values."),
   );
-  if (module_exists('token')) {
-    $form['help']['tokens'] = array(
-      '#theme' => 'token_tree_link',
-      '#token_types' => array('node'),
-    );
-  }
-  else {
-    $form['help']['#description'] = t("Core tokens can be used as dynamic placeholder tokens in your breadcrumb trails. To view a list of available tokens here, download and install the <a href='@token'>Token module</a> from Drupal.org.", array('@token' => 'http://www.drupal.org/project/token'));
-    $form['help']['#collapsible'] = FALSE;
-    $form['help']['#collapsed'] = FALSE;
-  }
-
+  $form['help']['tokens'] = array(
+    '#theme' => 'token_tree_link',
+    '#token_types' => array('node'),
+  );
   $form['help2'] = array(
     '#type' => 'fieldset',
     '#collapsible' => TRUE,
@@ -420,7 +411,10 @@ function custom_breadcrumbs_common_form_elements($bid, $breadcrumb) {
  * @see system_settings_form()
  */
 function custom_breadcrumbs_admin_settings($form, &$form_state) {
-  drupal_set_title(t('Custom breadcrumbs configuration'));
+  backdrop_set_title(t('Custom breadcrumbs configuration'));
+
+  $config = config('custom_breadcrumbs.settings');
+  $form['#config'] = 'custom_breadcrumbs.settings';
 
   $form['settings'] = array(
     '#type' => 'fieldset',
@@ -432,7 +426,7 @@ function custom_breadcrumbs_admin_settings($form, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('Home breadcrumb text'),
     // @codingStandardsIgnoreLine
-    '#default_value' => variable_get('custom_breadcrumb_home', t('Home')),
+    '#default_value' => $config->get('custom_breadcrumb_home'),
     '#description' => t('This text will be displayed as the first item of the breadcrumb trail. Typically Home or your site name. Leave blank to have no home breadcrumb. You can also specify a title attribute (tooltip text) to add to the link. Just separate the crumb text and the title attribute text with a pipe (|) symbol (i.e. Home crumb text|attribute title text).'),
   );
 
@@ -440,7 +434,7 @@ function custom_breadcrumbs_admin_settings($form, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('Home breadcrumb link'),
     // @codingStandardsIgnoreLine
-    '#default_value' => variable_get('custom_breadcrumb_home_link', '<front>'),
+    '#default_value' => $config->get('custom_breadcrumb_home_link'),
     '#description' => t('This link will be the link of the first item of the breadcrumb trail. Typically &lt;front&gt;.'),
   );
 
@@ -454,14 +448,14 @@ function custom_breadcrumbs_admin_settings($form, &$form_state) {
   $form['settings']['custom_breadcrumbs_append_page_title_fieldset']['custom_breadcrumbs_append_page_title'] = array(
     '#type' => 'checkbox',
     '#title' => t('Append page title'),
-    '#default_value' => variable_get('custom_breadcrumbs_append_page_title', FALSE),
+    '#default_value' => $config->get('custom_breadcrumbs_append_page_title'),
     '#description' => t('Append the page title at the end of every breadcrumb.'),
   );
 
   $form['settings']['custom_breadcrumbs_append_page_title_fieldset']['custom_breadcrumbs_append_page_title_no_link'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use plain text page title crumb'),
-    '#default_value' => variable_get('custom_breadcrumbs_append_page_title_no_link', FALSE),
+    '#default_value' => $config->get('custom_breadcrumbs_append_page_title_no_link'),
     '#description' => t('Enable this option to remove the link from the appended page title crumb.'),
   );
 
@@ -475,13 +469,13 @@ function custom_breadcrumbs_admin_settings($form, &$form_state) {
   $form['settings']['custom_breadcrumbs_menu_structure']['custom_breadcrumbs_set_menu_breadcrumb'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use the menu structure to set the breadcrumb trail'),
-    '#default_value' => variable_get('custom_breadcrumbs_set_menu_breadcrumb', FALSE),
+    '#default_value' => $config->get('custom_breadcrumbs_set_menu_breadcrumb'),
     '#description' => t("If enabled, the default breadcrumb trail will be patterned after the page's placement in the menu structure. Select the menus that this option will apply to below. Note that this default can be superceded by other custom breadcrumbs."),
     '#weight' => -30,
   );
 
   $menu_options = array();
-  foreach (menu_get_names() as $name) {
+  foreach (menu_get_menus(TRUE) as $name) {
     $menu_options[$name] = $name;
   }
 
@@ -489,7 +483,7 @@ function custom_breadcrumbs_admin_settings($form, &$form_state) {
     '#type' => 'select',
     '#title' => t('Menu name'),
     '#options' => $menu_options,
-    '#default_value' => variable_get('custom_breadcrumbs_menu_list', FALSE),
+    '#default_value' => $config->get('custom_breadcrumbs_menu_list'),
     '#description' => t("Pages within selected menus will have a default breadcrumb patterned after the menu structure."),
     '#multiple' => TRUE,
     '#weight' => -20,
@@ -505,7 +499,7 @@ function custom_breadcrumbs_admin_settings($form, &$form_state) {
   $form['adv_settings']['custom_breadcrumbs_set_global_home_breadcrumb'] = array(
     '#type' => 'checkbox',
     '#title' => t('Set the home breadcrumb text on all pages'),
-    '#default_value' => variable_get('custom_breadcrumbs_set_global_home_breadcrumb', FALSE),
+    '#default_value' => $config->get('custom_breadcrumbs_set_global_home_breadcrumb'),
     '#description' => t("If enabled, the home breadcrumb text will be used on all pages, not just those with defined custom breadcrumbs. If you don't want a home breadcrumb to be displayed, just enable this option and make sure that the <em>home breadcrumb text</em> above is empty."),
     '#weight' => -40,
   );
@@ -513,7 +507,7 @@ function custom_breadcrumbs_admin_settings($form, &$form_state) {
   $form['adv_settings']['custom_breadcrumbs_use_php_in_titles'] = array(
     '#type' => 'checkbox',
     '#title' => t('Allow the use of PHP to set titles and paths'),
-    '#default_value' => variable_get('custom_breadcrumbs_use_php_in_titles', FALSE),
+    '#default_value' => $config->get('custom_breadcrumbs_use_php_in_titles'),
     '#description' => t("If enabled, small PHP code snippets (less than 250 characters) can be used in the titles and paths section of the create breadcrumb forms. Each should return an array with text strings for each part of the crumb. Alternatively, a PHP code snippet placed in the titles box can return an associative array with elements 'titles' and 'paths', each an array of text strings. If this is done, the paths text field will be ignored."),
     '#weight' => -35,
   );
@@ -529,7 +523,7 @@ function custom_breadcrumbs_admin_settings($form, &$form_state) {
     '#type' => 'checkbox',
     '#title' => t('Force the active trail'),
     '#description' => t('This options sets the active trail to match the custom breadcrumb trail and overrides the normal theme_links() implementation to add the active-trail class to links. This is experimental and may not work as expected. If this is of interest to you, please test and report back to the custom breadcrumbs issue queue.'),
-    '#default_value' => variable_get('custom_breadcrumbs_force_active_trail', FALSE),
+    '#default_value' => $config->get('custom_breadcrumbs_force_active_trail'),
     '#weight' => -10,
   );
 
@@ -544,20 +538,21 @@ function custom_breadcrumbs_admin_settings($form, &$form_state) {
   $form['adv_settings']['custom_breadcrumbs_excluded']['custom_breadcrumbs_use_exclude_list'] = array(
     '#type' => 'checkbox',
     '#title' => t('Exclude custom breadcrumbs from some pages'),
-    '#default_value' => variable_get('custom_breadcrumbs_use_exclude_list', FALSE),
+    '#default_value' => $config->get('custom_breadcrumbs_use_exclude_list'),
   );
 
   $default_exclude_paths = array();
-  if (module_exists('admin_menu')) {
+  if (module_exists('admin_bar')) {
     $default_exclude_paths[] = 'admin/user/user';
     $default_exclude_paths[] = 'user';
   }
   $default = implode(',', $default_exclude_paths);
+  $exclude_list = $config->get('custom_breadcrumbs_exclude_list');
 
   $form['adv_settings']['custom_breadcrumbs_excluded']['custom_breadcrumbs_exclude_list'] = array(
     '#type' => 'textfield',
     '#title' => t('Do not set custom breadcrumbs on the following paths'),
-    '#default_value' => variable_get('custom_breadcrumbs_exclude_list', $default),
+    '#default_value' => (!empty($exclude_list)) ? $exclude_list : $default,
     '#description' => t("A comma delimited set of paths to exclude from custom breadcrumbs. The '*' character can be used as a wildcard."),
   );
 
@@ -577,40 +572,40 @@ function custom_breadcrumbs_admin_settings($form, &$form_state) {
   $form['adv_settings']['custom_breadcrumbs_identifiers']['cb_identifier_options']['custom_breadcrumbs_home_id'] = array(
     '#type' => 'checkbox',
     '#title' => t("Add a custom-breadcrumbs-home ID attribute to the home breadcrumb item."),
-    '#default_value' => variable_get('custom_breadcrumbs_home_id', FALSE),
+    '#default_value' => $config->get('custom_breadcrumbs_home_id'),
   );
 
   $form['adv_settings']['custom_breadcrumbs_identifiers']['cb_identifier_options']['custom_breadcrumbs_home_class'] = array(
     '#type' => 'checkbox',
     '#title' => t("Add a custom-breadcrumbs-home class attribute to the home breadcrumb item."),
-    '#default_value' => variable_get('custom_breadcrumbs_home_class', FALSE),
+    '#default_value' => $config->get('custom_breadcrumbs_home_class'),
   );
 
   $form['adv_settings']['custom_breadcrumbs_identifiers']['cb_identifier_options']['custom_breadcrumbs_parts_class'] = array(
     '#type' => 'checkbox',
     '#title' => t("Add a numbered class attribute for each breadcrumb item."),
     '#description' => t("If enabled, a custom-breadcrumbs-item-N class attribute will be assigned for each item, where N designates the item number, starting with the first item after the home breadcrumb."),
-    '#default_value' => variable_get('custom_breadcrumbs_parts_class', FALSE),
+    '#default_value' => $config->get('custom_breadcrumbs_parts_class'),
   );
 
   $form['adv_settings']['custom_breadcrumbs_identifiers']['cb_identifier_options']['custom_breadcrumbs_even_odd_class'] = array(
     '#type' => 'checkbox',
     '#title' => t("Add even and odd classes to breadcrumb items."),
-    '#default_value' => variable_get('custom_breadcrumbs_even_odd_class', FALSE),
+    '#default_value' => $config->get('custom_breadcrumbs_even_odd_class'),
   );
 
   $form['adv_settings']['custom_breadcrumbs_identifiers']['cb_identifier_options']['custom_breadcrumbs_type_class'] = array(
     '#type' => 'checkbox',
     '#title' => t("Store an identifier for breadcrumb theming."),
     '#description' => t("If enabled, the breadcrumb class 'custom-breadcrumbs-<em>type</em>' (where <em>type</em> is the breadcrumb type) can be retrieved and used in the breadcrumb theme override. The function <strong>custom_breadcrumbs_unique_breadcrumb_id()</strong> will return a string containing the class name."),
-    '#default_value' => variable_get('custom_breadcrumbs_type_class', FALSE),
+    '#default_value' => $config->get('custom_breadcrumbs_type_class'),
   );
 
   $form['adv_settings']['custom_breadcrumbs_identifiers']['cb_identifier_options']['custom_breadcrumbs_append_bid_class'] = array(
     '#type' => 'checkbox',
     '#title' => t("Append a unique breadcrumb id number to the custom-breadcrumbs-<em>type</em> identifier."),
     '#description' => t("If this option and 'Store an identifier for breadcrumb theming' are both enabled, the identifer will be custom-breadcrumbs-<em>type</em>-<em>id</em>, where id is the unique breadcrumb id number."),
-    '#default_value' => variable_get('custom_breadcrumbs_append_bid_class', FALSE),
+    '#default_value' => $config->get('custom_breadcrumbs_append_bid_class'),
   );
 
   $form['adv_settings']['module_weights'] = array(
@@ -628,9 +623,14 @@ function custom_breadcrumbs_admin_settings($form, &$form_state) {
   else {
     unset($form['adv_settings']['module_weights']);
   }
-  $form['#submit'][] = 'custom_breadcrumbs_admin_settings_submit';
 
-  return system_settings_form($form);
+  $form['actions']['#type'] = 'actions';
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save configuration'),
+  );
+
+  return $form;
 }
 
 /**
@@ -669,17 +669,30 @@ function custom_breadcrumbs_admin_settings_submit($form, &$form_state) {
           ->fields(array('weight' => $weight))
           ->condition('name', $module)
           ->execute();
-        variable_set('menu_rebuild_needed', TRUE);
+        state_set('menu_rebuild_needed', TRUE);
       }
       $current_mod_weight = $weight + 1;
     }
   }
 
+  unset($form_state['values']['table']);
+  unset($form_state['values']['submit']);
+  unset($form_state['values']['form_build_id']);
+  unset($form_state['values']['form_token']);
+  unset($form_state['values']['form_id']);
+  unset($form_state['values']['op']);
+
+  $config = config('custom_breadcrumbs.settings');
+  foreach ($form_state['values'] as $key => $value) {
+    $config->set($key, $value);
+  }
+  $config->save();
+
   // Rebuild the theme registry if custom_breadcrumbs_force_active_trail has
   // changed.
   if ($form_state['values']['custom_breadcrumbs_force_active_trail'] != $form['adv_settings']['custom_breadcrumbs_experimental']['custom_breadcrumbs_force_active_trail']['#default_value']) {
-    drupal_theme_rebuild();
-    drupal_set_message(t('The theme registry has been rebuilt'));
+    backdrop_theme_rebuild();
+    backdrop_set_message(t('The theme registry has been rebuilt'));
   }
 }
 
@@ -696,7 +709,7 @@ function custom_breadcrumbs_module_weight() {
   $module_id = 0;
   $weights = _custom_breadcrumbs_get_module_weight($modules);
   foreach ($weights as $module => $weight) {
-    $info = drupal_parse_info_file(drupal_get_path('module', $module) . '/' . $module . '.info');
+    $info = backdrop_parse_info_file(backdrop_get_path('module', $module) . '/' . $module . '.info');
     $form[$module_id]['#weight'] = $weight;
     $form[$module_id]['#module'] = $module;
     $form[$module_id]['name'] = array('#markup' => check_plain($info['name']));
@@ -726,16 +739,16 @@ function theme_custom_breadcrumbs_module_weight($variables) {
   foreach (element_children($form) as $key) {
     if (isset($form[$key]['name'])) {
       $row = array();
-      $row[] = drupal_render($form[$key]['name']);
+      $row[] = backdrop_render($form[$key]['name']);
       if (isset($form[$key]['weight'])) {
         $form[$key]['weight']['#attributes']['class'] = array('module-weight');
-        $row[] = drupal_render($form[$key]['weight']);
+        $row[] = backdrop_render($form[$key]['weight']);
       }
       $rows[] = array('data' => $row, 'class' => array('draggable'));
     }
   }
 
-  drupal_add_tabledrag('custom_breadcrumbs', 'order', 'self', 'module-weight');
+  backdrop_add_tabledrag('custom_breadcrumbs', 'order', 'self', 'module-weight');
   $output = theme('table', array(
     'header' => $header,
     'rows' => $rows,
@@ -743,7 +756,7 @@ function theme_custom_breadcrumbs_module_weight($variables) {
       'id' => 'custom_breadcrumbs',
     ),
   ));
-  $output .= drupal_render_children($form);
+  $output .= backdrop_render_children($form);
 
   return $output;
 }
@@ -861,7 +874,7 @@ function custom_breadcrumbs_filter_form($form) {
     );
   }
   $form['#submit'][] = 'custom_breadcrumbs_filter_form_submit';
-  drupal_add_library('system', 'drupal.form');
+  backdrop_add_library('system', 'drupal.form');
   return $form;
 }
 

@@ -3,13 +3,11 @@ description = "Enables taxonomy based breadcrumbs and allows for node associatio
 package = Custom breadcrumbs
 dependencies[] = custom_breadcrumbs
 dependencies[] = taxonomy
-core = 7.x
+backdrop = 1.x
+type = module
+
 configure = admin/config/user-interface/custom-breadcrumbs
 # @codingStandardsIgnoreLine
 files[] = custom_breadcrumbs_taxonomy.admin.inc
 # @codingStandardsIgnoreLine
 files[] = custom_breadcrumbs_taxonomy.inc
-# @codingStandardsIgnoreLine
-files[] = custom_breadcrumbs_taxonomy.install
-# @codingStandardsIgnoreLine
-files[] = custom_breadcrumbs_taxonomy.module
