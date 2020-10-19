@@ -53,11 +53,11 @@ function custom_breadcrumbs_page() {
   }
   // Sort the breadcrumbs according to $sort and $order.
   $columns = array(
-    'name' => 'Name',
-    'breadcrumb_type' => 'Breadcrumb Type',
+    'name' => t('Name'),
+    'breadcrumb_type' => t('Breadcrumb Type'),
   );
   if ($multilingual) {
-    $columns['language'] = 'Language';
+    $columns['language'] = t('Language');
   }
   $order = (isset($_GET['order']) && in_array($_GET['order'], array_keys($columns))) ? $_GET['order'] : 'name';
   $sort[$order] = (isset($_GET['sort']) && ($_GET['sort'] == 'desc')) ? 'desc' : 'asc';
@@ -91,7 +91,7 @@ function custom_breadcrumbs_page() {
     $row['breadcrumb_type'] = array('data' => $type);
     if ($multilingual) {
       $row['language'] = array(
-        'data' => module_invoke('locale', 'language_name', $breadcrumb->language),
+        'data' => language_name($breadcrumb->language),
       );
     }
     $row['edit'] = l(t('edit'), $path . '/' . $breadcrumb->breadcrumb_type . '/edit/' . $breadcrumb->bid);
@@ -319,7 +319,7 @@ function custom_breadcrumbs_common_form_elements($bid, $breadcrumb) {
     $form['language'] = array(
       '#type' => 'select',
       '#title' => t('Language'),
-      '#options' => array('' => t('All languages')) + locale_language_list('name'),
+      '#options' => array('' => t('All languages')) + language_list(TRUE, TRUE),
       '#default_value' => isset($breadcrumb->language) ? $breadcrumb->language : NULL,
       '#description' => t('A breadcrumb set for a specific language will always be used when displaying a node in that language, and takes precedence over breadcrumbs set for <em>All languages</em>.'),
     );
@@ -340,7 +340,7 @@ function custom_breadcrumbs_common_form_elements($bid, $breadcrumb) {
 
   $description = t('A list of titles for the breadcrumb links, one on each line. For each crumb title you can also specify a title attribute to add to the link. Separate the crumb title and the title attribute with a pipe (|) symbol.');
   if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_use_php_in_titles') && user_access('use php in custom breadcrumbs')) {
-    $description .= ' ' . t("Or, you can enter a small PHP code snippet (less than 250 characters) returning either an array of text strings for the breadcrumb titles, with one title per array element, or an associative array with elements 'titles' and 'paths' each containing an array of text strings for the breadcrumb titles and paths, respectively. Include the snippet between %php. Use with caution since incorrect PHP code can break your Drupal site. Token replacement will occur after any PHP is evaluated.", array('%php' => '<?php ?>'));
+    $description .= ' ' . t("Or, you can enter a small PHP code snippet (less than 250 characters) returning either an array of text strings for the breadcrumb titles, with one title per array element, or an associative array with elements 'titles' and 'paths' each containing an array of text strings for the breadcrumb titles and paths, respectively. Include the snippet between %php. Use with caution since incorrect PHP code can break your Backdrop site. Token replacement will occur after any PHP is evaluated.", array('%php' => '<?php ?>'));
   }
 
   $form['titles'] = array(
@@ -351,9 +351,9 @@ function custom_breadcrumbs_common_form_elements($bid, $breadcrumb) {
     '#default_value' => isset($breadcrumb->titles) ? $breadcrumb->titles : NULL,
   );
 
-  $description = t('A list of Drupal paths for the breadcrumb links, one on each line.');
+  $description = t('A list of Backdrop paths for the breadcrumb links, one on each line.');
   if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_use_php_in_titles') && user_access('use php in custom breadcrumbs')) {
-    $description .= ' ' . t("You can also enter a small PHP code snippet (less than 250 characters) returning an array of drupal paths for the breadcrumb links, with one path per array element. Include the snippet between %php. Use with caution since incorrect PHP code can break your Drupal site. Token replacement will occur after any PHP is evaluated.", array('%php' => '<?php ?>'));
+    $description .= ' ' . t("You can also enter a small PHP code snippet (less than 250 characters) returning an array of backdrop paths for the breadcrumb links, with one path per array element. Include the snippet between %php. Use with caution since incorrect PHP code can break your Backdrop site. Token replacement will occur after any PHP is evaluated.", array('%php' => '<?php ?>'));
   }
   $form['paths'] = array(
     '#type' => 'textarea',
@@ -792,7 +792,7 @@ function custom_breadcrumbs_filters() {
   if (_custom_breadcrumbs_multilingual()) {
     $filters['language'] = array(
       'title' => t('Language'),
-      'options' => array('' => t('All languages')) + locale_language_list('name'),
+      'options' => array('' => t('All languages')) + language_list(TRUE, TRUE),
     );
   }
   return $filters;
@@ -874,7 +874,7 @@ function custom_breadcrumbs_filter_form($form) {
     );
   }
   $form['#submit'][] = 'custom_breadcrumbs_filter_form_submit';
-  backdrop_add_library('system', 'drupal.form');
+  backdrop_add_library('system', 'backdrop.form');
   return $form;
 }
 
@@ -941,7 +941,7 @@ function custom_breadcrumbs_simple_breadcrumb_table($breadcrumbs) {
     $row[] = array('data' => check_plain($breadcrumb->paths));
     if ($multilingual) {
       $row[] = array(
-        'data' => module_invoke('locale', 'language_name', $breadcrumb->language),
+        'data' => language_name($breadcrumb->language),
       );
     }
     $row[] = l(t('edit'), 'admin/structure/custom_breadcrumbs/' . $breadcrumb->breadcrumb_type . '/edit/' . $breadcrumb->bid);

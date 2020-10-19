@@ -56,7 +56,7 @@ function custom_breadcrumbs_views_menu() {
 
   $items['admin/structure/custom_breadcrumbs/views/add'] = array(
     'title' => 'Views',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('custom_breadcrumbs_views_form', 'views'),
     'access callback' => 'user_access',
     'access arguments' => array('administer custom breadcrumbs'),
@@ -66,7 +66,7 @@ function custom_breadcrumbs_views_menu() {
 
   $items['admin/structure/custom_breadcrumbs/views/edit'] = array(
     'title' => 'Edit custom breadcrumb for views',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('custom_breadcrumbs_views_form', 'views'),
     'access callback' => 'user_access',
     'access arguments' => array('administer custom breadcrumbs'),
@@ -87,7 +87,7 @@ function custom_breadcrumbs_views_views_post_render(&$view) {
     'all' => '',
   );
 
-  $curpath = drupal_get_normal_path($_GET['q']);
+  $curpath = backdrop_get_normal_path($_GET['q']);
   // Check to see if the view path matches the current path.
   foreach ($view->display as $id => $display) {
     // Identify allowed displays for breadcrumb replacement.
@@ -145,12 +145,12 @@ function custom_breadcrumbs_views_form($form, &$form_state, $type) {
   $breadcrumb = NULL;
   $bid = arg(5);
   if (isset($bid)) {
-    drupal_set_title(t('Edit Custom Breadcrumb for View'));
+    backdrop_set_title(t('Edit Custom Breadcrumb for View'));
     $breadcrumbs = custom_breadcrumbs_load_breadcrumbs('custom_breadcrumbs_views', NULL, array('bid' => $bid));
     $breadcrumb = array_pop($breadcrumbs);
   }
   else {
-    drupal_set_title(t('Add Custom Breadcrumb for View'));
+    backdrop_set_title(t('Add Custom Breadcrumb for View'));
   }
   $options = array();
   $views = views_get_all_views();

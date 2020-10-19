@@ -30,7 +30,7 @@ function custom_breadcrumbs_taxonomy_node_get_terms($node, $key = 'tid') {
       }
     }
     // Allow other modules to alter the terms found by the previous query.
-    drupal_alter('custom_breadcrumbs_taxonomy_node_terms', $terms, $node, $key);
+    backdrop_alter('custom_breadcrumbs_taxonomy_node_terms', $terms, $node, $key);
     return $terms[$node->vid][$key];
   }
   return array();
@@ -67,7 +67,7 @@ function _custom_breadcrumbs_taxonomy_set_breadcrumb($tid, $vid = NULL, $is_term
     if (variable_get('custom_breadcrumbs_taxonomy_include_node_title', FALSE) && isset($objs['node'])) {
       $breadcrumb[] = check_plain($objs['node']->title);
     }
-    drupal_set_breadcrumb($breadcrumb);
+    backdrop_set_breadcrumb($breadcrumb);
     custom_breadcrumbs_taxonomy_set_session();
 
     // Optionally save the unique breadcrumb id of the last set breadcrumb.
@@ -324,7 +324,7 @@ function _custom_breadcrumbs_taxonomy_home_trail() {
   $trail = array();
   if (variable_get('custom_breadcrumbs_taxonomy_append_breadcrumb', FALSE)) {
     // Check to see if a breadcrumb has already been defined.
-    $trail = drupal_get_breadcrumb();
+    $trail = backdrop_get_breadcrumb();
   }
   else {
     $trail = custom_breadcrumbs_home_crumb();

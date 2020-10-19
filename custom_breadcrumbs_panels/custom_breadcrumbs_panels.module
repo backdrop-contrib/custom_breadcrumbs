@@ -57,7 +57,7 @@ function custom_breadcrumbs_panels_menu() {
 
   $items['admin/structure/custom_breadcrumbs/panels/add'] = array(
     'title' => 'Panels',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('custom_breadcrumbs_panels_form', 'panels'),
     'access callback' => 'user_access',
     'access arguments' => array('administer custom breadcrumbs'),
@@ -67,7 +67,7 @@ function custom_breadcrumbs_panels_menu() {
 
   $items['admin/structure/custom_breadcrumbs/panels/edit'] = array(
     'title' => 'Edit custom breadcrumb for panels',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('custom_breadcrumbs_panels_form', 'panels'),
     'access callback' => 'user_access',
     'access arguments' => array('administer custom breadcrumbs'),
@@ -237,12 +237,12 @@ function custom_breadcrumbs_panels_form($form, &$form_state, $type) {
   $breadcrumb = NULL;
   $bid = arg(5);
   if (isset($bid)) {
-    drupal_set_title(t('Edit Custom Breadcrumb for Panel Page'));
+    backdrop_set_title(t('Edit Custom Breadcrumb for Panel Page'));
     $breadcrumbs = custom_breadcrumbs_load_breadcrumbs('custom_breadcrumbs_panels', NULL, array('bid' => $bid));
     $breadcrumb = array_pop($breadcrumbs);
   }
   else {
-    drupal_set_title(t('Add Custom Breadcrumb for Panel Page'));
+    backdrop_set_title(t('Add Custom Breadcrumb for Panel Page'));
   }
   $options = array();
   $tasks = page_manager_get_tasks_by_type('page');

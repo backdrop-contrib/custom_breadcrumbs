@@ -1,25 +1,6 @@
 Custom Breadcrumbs
 ==================
 
-CONTENTS OF THIS FILE
----------------------
-
-* Introduction
-* Requirements
-* Installation
-* Summary
-* New Features
-* User Interface
-* Languages
-* HOME breadcrumb
-* Use PHP in breadcrumb titles and paths
-* Add CSS classes to custom breadcrumb elements
-* Special Identifiers
-* Maintainers
-
-INTRODUCTION
-------------
-
 Allows administrators to set up parametrized breadcrumb trails for any node
 type.
 
@@ -63,12 +44,11 @@ SUMMARY
 NEW FEATURES
 ------------
 
-Beginning with the 6.x-2.x release, custom breadcrumbs has many new features
-which are available through optional modules in the custom breadcrumbs package.
-The base module, required by all the others, is still custom_breadcrumbs. This
-module handles custom breadcrumbs based on node type as described above. The
-following optional modules can also be installed to provide custom breadcrumbs
-in a variety of situations:
+Custom breadcrumbs has many new features which are available through optional
+modules in the custom breadcrumbs package. The base module, required by all the
+others, is still custom_breadcrumbs. This module handles custom breadcrumbs based
+on node type as described above. The following optional modules can also be
+installed to provide custom breadcrumbs in a variety of situations:
 
 * custom_breadcrumbs_views provides custom breadcrumbs on views pages.
    Once this module is enabled, a new "Views" tab will appear at
@@ -82,7 +62,7 @@ in a variety of situations:
 * custom_breadcrumbs_paths provides custom breadcrumbs on nodes and views at
    a specified path (url). Once this module is enabled, a new "Path" tab will
    appear at admin/structure/custom_breadcrumbs.  To add a breadcrumb for a node
-   or a view at a specific path, just enter the Drupal path in the Specific
+   or a view at a specific path, just enter the Backdrop path in the Specific
    Path section. Fill in the visibility, title and paths sections as
    described above, and save the breadcrumb. Now your breadcrumb should appear
    on the node or view at the specific path that you selected. Note that custom
@@ -121,7 +101,7 @@ in a variety of situations:
    settings page. The option to add the node title at the end of the breadcrumb
    trail can also be enabled on that page. There is also an option to append
    the current taxonomy term to the breadcrumb on taxonomy term pages
-   (defined to be any page with drupal path */taxonomy/term/*).
+   (defined to be any page with backdrop path */taxonomy/term/*).
 
    In the standard custom breadcrumbs mode, you can provide the titles and paths
    for constructing the breadcrumb trail on nodes that have defined taxonomy
@@ -160,7 +140,7 @@ in a variety of situations:
    must be inserted within the function (preferably after defining $breadcrumb
    but before setting the breadcrumb):
 
-   drupal_alter('breadcrumb', $breadcrumb, 'module_page_name');
+   `backdrop_alter('breadcrumb', $breadcrumb, 'module_page_name');`
 
    Continuing with the forum module example, 'module_page_name' would be
    replaced with 'forum listing'.
@@ -249,7 +229,7 @@ Titles:
 Paths:
 `<?php return array('path/to/title-1', 'path/to/title-2', 'path/to/title-3');?>`
 
-Sometimes, it may be more convient to assign the titles and paths in the same
+Sometimes, it may be more convenient to assign the titles and paths in the same
 code snippet, so you can also return an associate array with elements 'titles'
 and 'paths' that contain the titles and paths arrays, respectively.
 For example,
@@ -404,14 +384,24 @@ No special requirements
 INSTALLATION
 ------------
 
-Install as you would normally install a contributed Drupal module. See:
+Install as you would normally install a contributed Backdrop module. See:
 <https://drupal.org/documentation/install/modules-themes/modules-7> for further
 information.
 
-MAINTAINERS
+License
+-------
+
+This project is GPL v2 software. See the LICENSE.txt file in this directory for complete text.
+
+Maintainers
 -----------
 
-Current maintainers:
+Herb v/d Dool (https://github.com/herbdool)
+
+Credit
+------
+
+Drupal 7 version:
 
 * Colan Schwartz (colan) <https://www.drupal.org/user/58704>
 * Renato Gonçalves (RenatoG) <https://www.drupal.org/user/3326031>
@@ -421,3 +411,5 @@ Current maintainers:
 * dbabbage
 * Michelle
 * MGN
+
+Ported to Backdrop CMS by Herb v/d Dool (https://github.com/herbdool).

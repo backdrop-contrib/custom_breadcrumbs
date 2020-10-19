@@ -17,9 +17,7 @@ function custom_breadcrumbs_identifiers_cb_identifier_list() {
   $identifiers = array();
 
   $identifiers['<none>'] = t('Produces a plain text crumb. This identifier should not be used with the pipe (|) symbol.');
-  if (module_exists('pathauto')) {
-    $identifiers['<pathauto>'] = t('Cleans the given path using your pathauto replacement rules.');
-  }
+  $identifiers['<path>'] = t('Cleans the given path using your path replacement rules.');
 
   // Additional identifiers can be added here.
   $identifiers['<book-hierarchy>'] = t('Provides crumbs for each parent node of a book page. Whatever is placed in the corresponding position of the title area will be ignored. It should not be used with the pipe (|) symbol.');
@@ -58,7 +56,7 @@ function custom_breadcrumbs_identifiers_cb_identifier_values($identifier, $obj) 
         else {
           $attributes['class'] = $class;
         }
-        $title = '<span' . drupal_attributes($attributes) . '>' . $title . '</span>';
+        $title = '<span' . backdrop_attributes($attributes) . '>' . $title . '</span>';
       }
       $crumb_item = array(
         'crumb' => $title,
@@ -69,7 +67,7 @@ function custom_breadcrumbs_identifiers_cb_identifier_values($identifier, $obj) 
 
     case '<page-title>':
       // Decode title to properly handle special characters.
-      $title = filter_xss(drupal_get_title());
+      $title = filter_xss(backdrop_get_title());
       $crumb_item = array(
         'crumb' => $title,
         'title' => $title,
@@ -78,7 +76,7 @@ function custom_breadcrumbs_identifiers_cb_identifier_values($identifier, $obj) 
       break;
 
     case '<pathauto>':
-      $options = drupal_parse_url($obj['path']);
+      $options = backdrop_parse_url($obj['path']);
       $options = array_merge($options, $obj['attributes']);
       if (module_exists('pathauto')) {
         module_load_include('inc', 'pathauto', 'pathauto');
@@ -137,7 +135,7 @@ function custom_breadcrumbs_identifiers_cb_identifier_values($identifier, $obj) 
       $path = ($obj['path'] != '') ? $obj['path'] : $_GET['q'];
       $attributes = $obj['attributes'];
       // Search for both alias and normal path.
-      $normal_path = drupal_get_normal_path($path);
+      $normal_path = backdrop_get_normal_path($path);
 
       $menu_item = db_select('menu_links', 'ml')->fields('ml')->condition('link_path', array($path, $normal_path), 'IN')->execute()->fetch();
 

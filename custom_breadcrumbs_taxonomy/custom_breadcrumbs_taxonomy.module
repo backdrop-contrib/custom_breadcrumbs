@@ -117,7 +117,7 @@ function custom_breadcrumbs_taxonomy_menu() {
   $items = array();
   $items['admin/structure/custom_breadcrumbs/taxonomy_term/add'] = array(
     'title' => 'Term',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('custom_breadcrumbs_taxonomy_term_form', 'taxonomy_term'),
     'access arguments' => array('administer custom breadcrumbs'),
     'file' => 'custom_breadcrumbs_taxonomy.admin.inc',
@@ -126,7 +126,7 @@ function custom_breadcrumbs_taxonomy_menu() {
   );
   $items['admin/structure/custom_breadcrumbs/taxonomy_term/edit'] = array(
     'title' => 'Edit custom breadcrumb for taxonomy term',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('custom_breadcrumbs_taxonomy_term_form', 'taxonomy_term'),
     'file' => 'custom_breadcrumbs_taxonomy.admin.inc',
     'access arguments' => array('administer custom breadcrumbs'),
@@ -134,7 +134,7 @@ function custom_breadcrumbs_taxonomy_menu() {
   );
   $items['admin/structure/custom_breadcrumbs/taxonomy_vocabulary/add'] = array(
     'title' => 'Vocabulary',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('custom_breadcrumbs_taxonomy_vocabulary_form', 'taxonomy_vocabulary'),
     'access arguments' => array('administer custom breadcrumbs'),
     'file' => 'custom_breadcrumbs_taxonomy.admin.inc',
@@ -143,7 +143,7 @@ function custom_breadcrumbs_taxonomy_menu() {
   );
   $items['admin/structure/custom_breadcrumbs/taxonomy_vocabulary/edit'] = array(
     'title' => 'Edit custom breadcrumb for taxonomy vobaculary',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('custom_breadcrumbs_taxonomy_vocabulary_form', 'taxonomy_vocabulary'),
     'access arguments' => array('administer custom breadcrumbs'),
     'file' => 'custom_breadcrumbs_taxonomy.admin.inc',
@@ -157,7 +157,7 @@ function custom_breadcrumbs_taxonomy_menu() {
  * Implements hook_node_view().
  */
 function custom_breadcrumbs_taxonomy_node_view($node, $build_mode) {
-  if ($build_mode == 'full' && !drupal_is_front_page()) {
+  if ($build_mode == 'full' && !backdrop_is_front_page()) {
     if (_custom_breadcrumbs_taxonomy_allowed_node_type($node->type)) {
       module_load_include('inc', 'custom_breadcrumbs_taxonomy');
       // Extract the most recently viewed term or the lightest term from
@@ -190,7 +190,7 @@ function custom_breadcrumbs_taxonomy_views_pre_render(&$view) {
     module_load_include('inc', 'custom_breadcrumbs', 'custom_breadcrumbs_common');
     // Set the taxonomy breadcrumb for the view.
     if (isset($view->display) && !empty($view->display)) {
-      $curpath = drupal_get_normal_path($_GET['q']);
+      $curpath = backdrop_get_normal_path($_GET['q']);
       // A taxonomy term page is any page with path a component 'taxonomy'
       // followed by 'term'.
       $arg_values = arg(NULL, $curpath);
@@ -383,7 +383,7 @@ function custom_breadcrumbs_taxonomy_form_custom_breadcrumbs_admin_settings_alte
     '#title' => t('Do not cache pages with custom breadcrumbs taxonomy breadcrumbs'),
     '#default_value' => variable_get('custom_breadcrumbs_taxonomy_uncache', FALSE),
     '#disabled' => !variable_get('custom_breadcrumbs_taxonomy_session', FALSE),
-    '#description' => t("With normal Drupal caching, dynamic taxonomy breadcrumbs may not be created for anonymous users. Enabling this option will prevent caching of pages that have a taxonomy breadcrumb so the breadcrumb can be properly constructed. This requires the use of session variables and will reduce performance on the pages that are not cached."),
+    '#description' => t("With normal Backdrop caching, dynamic taxonomy breadcrumbs may not be created for anonymous users. Enabling this option will prevent caching of pages that have a taxonomy breadcrumb so the breadcrumb can be properly constructed. This requires the use of session variables and will reduce performance on the pages that are not cached."),
     '#weight' => 46,
   );
 

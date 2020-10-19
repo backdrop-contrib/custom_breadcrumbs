@@ -20,12 +20,12 @@ function custom_breadcrumbs_taxonomy_term_form($form, &$form_state, $type) {
   $bid = arg(5);
   $breadcrumb = NULL;
   if (isset($bid)) {
-    drupal_set_title(t('Edit Custom Breadcrumb for Taxonomy Term'));
+    backdrop_set_title(t('Edit Custom Breadcrumb for Taxonomy Term'));
     $breadcrumbs = custom_breadcrumbs_load_breadcrumbs('custom_breadcrumbs_taxonomy', 'custom_breadcrumbs_taxonomy_term', array('bid' => $bid));
     $breadcrumb = array_pop($breadcrumbs);
   }
   else {
-    drupal_set_title(t('Add Custom Breadcrumb for Taxonomy Term'));
+    backdrop_set_title(t('Add Custom Breadcrumb for Taxonomy Term'));
   }
   // @todo This will not scale well for large taxonomies.
   // @todo Is it possible to provide an autocomplete for several vocabularies?
@@ -71,7 +71,7 @@ function custom_breadcrumbs_taxonomy_term_form($form, &$form_state, $type) {
       '#type' => 'textfield',
       '#title' => t('Path'),
       '#required' => TRUE,
-      '#description' => t('Specify the Drupal path that the taxonomy term will be linked to. Currently operating in taxonomy breadcrumbs mode. Disable the <em>use taxonomy hierarchy</em> option on the <a href="@link">Custom Breadcrumbs Settings</a> page if you would prefer to specify several titles/paths for the breadcrumb.', array('@link' => url('admin/config/user-interface/custom-breadcrumbs'))),
+      '#description' => t('Specify the Backdrop path that the taxonomy term will be linked to. Currently operating in taxonomy breadcrumbs mode. Disable the <em>use taxonomy hierarchy</em> option on the <a href="@link">Custom Breadcrumbs Settings</a> page if you would prefer to specify several titles/paths for the breadcrumb.', array('@link' => url('admin/config/user-interface/custom-breadcrumbs'))),
       '#default_value' => isset($breadcrumb->paths) ? $breadcrumb->paths : NULL,
     );
   }
@@ -100,12 +100,12 @@ function custom_breadcrumbs_taxonomy_vocabulary_form($form, &$form_state, $type)
   $bid = arg(5);
   $breadcrumb = NULL;
   if (isset($bid)) {
-    drupal_set_title(t('Edit Custom Breadcrumb for Taxonomy Vocabulary'));
+    backdrop_set_title(t('Edit Custom Breadcrumb for Taxonomy Vocabulary'));
     $breadcrumbs = custom_breadcrumbs_load_breadcrumbs('custom_breadcrumbs_taxonomy', 'custom_breadcrumbs_taxonomy_vocabulary', array('bid' => $bid));
     $breadcrumb = array_pop($breadcrumbs);
   }
   else {
-    drupal_set_title(t('Add Custom Breadcrumb for Taxonomy Vocabulary'));
+    backdrop_set_title(t('Add Custom Breadcrumb for Taxonomy Vocabulary'));
   }
 
   // Get a list of all vocabularies.
@@ -144,7 +144,7 @@ function custom_breadcrumbs_taxonomy_vocabulary_form($form, &$form_state, $type)
       '#type' => 'textfield',
       '#title' => t('Path'),
       '#required' => TRUE,
-      '#description' => t('Specify the Drupal path that the taxonomy vocabulary will be linked to. Currently operating in taxonomy breadcrumbs mode. Disable the <em>use taxonomy hierarchy</em> option on the <a href="@link">Custom Breadcrumbs Settings</a> page if you would prefer to specify several titles/paths for the breadcrumb.', array('@link' => url('admin/config/user-interface/custom-breadcrumbs'))),
+      '#description' => t('Specify the Backdrop path that the taxonomy vocabulary will be linked to. Currently operating in taxonomy breadcrumbs mode. Disable the <em>use taxonomy hierarchy</em> option on the <a href="@link">Custom Breadcrumbs Settings</a> page if you would prefer to specify several titles/paths for the breadcrumb.', array('@link' => url('admin/config/user-interface/custom-breadcrumbs'))),
       '#default_value' => isset($breadcrumb->paths) ? $breadcrumb->paths : NULL,
     );
   }
