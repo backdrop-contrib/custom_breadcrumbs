@@ -944,10 +944,10 @@ function custom_breadcrumbs_theme_registry_alter(&$theme_registry) {
       'menu_item' => isset($theme_registry['menu_item']) ? $theme_registry['menu_item']['function'] : "",
       'menu_item_link' => isset($theme_registry['menu_item_link']) ? $theme_registry['menu_item_link']['function'] : "",
     );
-    variable_set('custom_breadcrumbs_menu_theme', $themes);
+    config_set('custom_breadcrumbs.settings', 'custom_breadcrumbs_menu_theme', $themes);
     // Replace these with our own functions. We will call the original functions
     // after call these override functions.
-    $theme_registry['links']['function'] = 'custom_breadcrumbs_override_links';
+    //$theme_registry['links']['function'] = 'custom_breadcrumbs_override_links';
     $theme_registry['menu_item_link']['function'] = 'custom_breadcrumbs_theme_menu_item_link';
     $theme_registry['menu_item']['function'] = 'custom_breadcrumbs_theme_menu_item';
   }
@@ -991,6 +991,7 @@ function custom_breadcrumbs_in_active_trail($link) {
 function custom_breadcrumbs_override_links($links, $attributes = array('class' => 'links')) {
   $output = '';
   if (count($links) > 0) {
+    debug($links);
     $output = '<ul' . backdrop_attributes($attributes) . '>';
 
     $num_links = count($links);
