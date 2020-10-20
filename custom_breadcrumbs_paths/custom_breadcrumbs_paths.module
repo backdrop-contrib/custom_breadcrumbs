@@ -237,7 +237,7 @@ function _custom_breadcrumbs_paths_page_match($breadcrumb) {
     else {
       // Append the current language if the breadcrumb language is 'All'.
       global $language;
-      $path = $language->language . '/' . $breadcrumb->specific_path;
+      $path = $language->langcode . '/' . $breadcrumb->specific_path;
       $page_match = _custom_breadcrumbs_match_path($request, $path);
     }
     if (!$page_match) {

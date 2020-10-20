@@ -83,7 +83,7 @@ function custom_breadcrumbs_views_views_post_render(&$view) {
   // breadcrumb.
   global $language;
   $languages = array(
-    'language' => $language->language,
+    'language' => $language->langcode,
     'all' => '',
   );
 

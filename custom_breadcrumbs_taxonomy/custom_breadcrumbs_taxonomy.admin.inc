@@ -33,11 +33,12 @@ function custom_breadcrumbs_taxonomy_term_form($form, &$form_state, $type) {
   // Create taxonomy tree of all terms not in excluded vocabularies.
   $excluded = variable_get('custom_breadcrumbs_taxonomy_excluded_vocabs', array());
   $vocabularies = taxonomy_get_vocabularies();
+  debug($vocabularies);
   foreach ($vocabularies as $vocabulary) {
-    if (in_array($vocabulary->vid, $excluded)) {
+    if (in_array($vocabulary->machine_name, $excluded)) {
       continue;
     }
-    $tree = taxonomy_get_tree($vocabulary->vid);
+    $tree = taxonomy_get_tree($vocabulary->machine_name);
     if ($tree) {
       foreach ($tree as $term) {
         $choice = new stdClass();
@@ -113,7 +114,7 @@ function custom_breadcrumbs_taxonomy_vocabulary_form($form, &$form_state, $type)
   $excluded = variable_get('custom_breadcrumbs_taxonomy_excluded_vocabs', array());
   $options = array();
   foreach ($vocabularies as $vid => $vocabulary) {
-    if (!in_array($vocabulary->vid, $excluded)) {
+    if (!in_array($vocabulary->machine_name, $excluded)) {
       $options[$vid] = $vocabulary->name;
     }
   }
@@ -123,7 +124,7 @@ function custom_breadcrumbs_taxonomy_vocabulary_form($form, &$form_state, $type)
     '#options' => $options,
     '#required' => TRUE,
     '#description' => t('Select the taxonomy vocabulary to apply this breadcrumb to. <a href="@excluded">Excluded vocabularies</a> will not be listed here.', array('@excluded' => url('admin/config/user-interface/custom-breadcrumbs'))),
-    '#default_value' => isset($breadcrumb->vid) ? $breadcrumb->vid : NULL,
+    '#default_value' => isset($breadcrumb->machine_name) ? $breadcrumb->vid : NULL,
     '#weight' => -10,
   );
 

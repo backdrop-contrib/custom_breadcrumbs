@@ -116,7 +116,7 @@ function custom_breadcrumbs_panels_ctools_render_alter($info, $page, $data) {
   if ($page) {
     global $language;
     $languages = array(
-      'language' => $language->language,
+      'language' => $language->langcode,
       'all' => '',
     );
     // Check to see if the panel ID matches any custom_breadcrumb panel_id.

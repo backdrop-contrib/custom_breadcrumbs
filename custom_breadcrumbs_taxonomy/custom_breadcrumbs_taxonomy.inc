@@ -76,7 +76,7 @@ function _custom_breadcrumbs_taxonomy_set_breadcrumb($tid, $vid = NULL, $is_term
   else {
     global $language;
     $languages = array(
-      'language' => $language->language,
+      'language' => $language->langcode,
       'all' => '',
     );
     // Check each term to see if it has a custom breadcrumb.

@@ -438,7 +438,7 @@ function custom_breadcrumbs_taxonomy_form_custom_breadcrumbs_admin_settings_alte
   $options = array();
   foreach ($vocabs as $vocab) {
     $name = check_plain($vocab->name);
-    $options[$vocab->vid] = $name;
+    $options[$vocab->machine_name] = $name;
   }
 
   $cb_vocabs = variable_get('custom_breadcrumbs_taxonomy_excluded_vocabs', array());
@@ -542,7 +542,7 @@ function custom_breadcrumbs_taxonomy_cb_node_form_table($node) {
       // Also look for a match on the taxonomy vocabulary.
       $vocabularies = taxonomy_get_vocabularies($node->type);
       foreach ($vocabularies as $vocabulary) {
-        $more = custom_breadcrumbs_load_breadcrumbs('custom_breadcrumbs_taxonomy', 'custom_breadcrumbs_taxonomy_vocabulary', array('vid' => $vocabulary->vid));
+        $more = custom_breadcrumbs_load_breadcrumbs('custom_breadcrumbs_taxonomy', 'custom_breadcrumbs_taxonomy_vocabulary', array('vid' => $vocabulary->machine_name));
         if (!empty($more)) {
           $breadcrumbs = array_merge($breadcrumbs, $more);
         }

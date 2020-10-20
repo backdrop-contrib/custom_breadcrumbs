@@ -102,7 +102,7 @@ function custom_breadcrumbsapi_breadcrumb_alter($breadcrumb, $modulepage, $objs 
   // @codingStandardsIgnoreEnd
   global $language;
   $languages = array(
-    'language' => $language->language,
+    'language' => $language->langcode,
     'all' => '',
   );
   $breadcrumbs = custom_breadcrumbs_load_breadcrumbs('custom_breadcrumbsapi', NULL, array('module_page' => $modulepage), $languages);
@@ -189,7 +189,7 @@ function custom_breadcrumbsapi_preprocess(&$variables, $hook) {
     $tried[$hook] = TRUE;
     global $language;
     $languages = array(
-      'language' => $language->language,
+      'language' => $language->langcode,
       'all' => '',
     );
     $breadcrumbs = custom_breadcrumbs_load_breadcrumbs('custom_breadcrumbsapi', NULL, array('module_page' => $hook), $languages);
