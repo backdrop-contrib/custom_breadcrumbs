@@ -2,7 +2,7 @@ Custom Breadcrumbs
 ==================
 
 Allows administrators to set up parametrized breadcrumb trails for any node
-type.
+type, taxonomy, path, etc.
 
 SUMMARY
 -------
@@ -396,20 +396,14 @@ This project is GPL v2 software. See the LICENSE.txt file in this directory for 
 Maintainers
 -----------
 
-Herb v/d Dool (https://github.com/herbdool)
+Seeking maintainers.
 
 Credit
 ------
 
-Drupal 7 version:
+Drupal 7 version maintainers:
 
 * Colan Schwartz (colan) <https://www.drupal.org/user/58704>
 * Renato Gonçalves (RenatoG) <https://www.drupal.org/user/3326031>
 * MGN - <https://www.drupal.org/user/321760>
 * thePanz - <https://www.drupal.org/user/58689>
-* bennybobw
-* dbabbage
-* Michelle
-* MGN
-
-Ported to Backdrop CMS by Herb v/d Dool (https://github.com/herbdool).
