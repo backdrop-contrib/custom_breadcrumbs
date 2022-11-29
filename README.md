@@ -396,7 +396,7 @@ This project is GPL v2 software. See the LICENSE.txt file in this directory for 
 Maintainers
 -----------
 
-Seeking maintainers.
+* [Laryn Kragt Bakker](https://github.com/laryn)
 
 Credit
 ------
