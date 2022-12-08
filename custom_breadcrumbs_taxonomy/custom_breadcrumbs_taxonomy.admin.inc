@@ -16,6 +16,7 @@
  * @see custom_breadcrumbs_form_submit()
  */
 function custom_breadcrumbs_taxonomy_term_form($form, &$form_state, $type) {
+  $config = config('custom_breadcrumbs.settings');
   $form = array();
   $bid = arg(5);
   $breadcrumb = NULL;
@@ -31,9 +32,8 @@ function custom_breadcrumbs_taxonomy_term_form($form, &$form_state, $type) {
   // @todo Is it possible to provide an autocomplete for several vocabularies?
   $options = array();
   // Create taxonomy tree of all terms not in excluded vocabularies.
-  $excluded = variable_get('custom_breadcrumbs_taxonomy_excluded_vocabs', array());
+  $excluded = $config->get('custom_breadcrumbs_taxonomy_excluded_vocabs');
   $vocabularies = taxonomy_get_vocabularies();
-  debug($vocabularies);
   foreach ($vocabularies as $vocabulary) {
     if (in_array($vocabulary->machine_name, $excluded)) {
       continue;
@@ -58,7 +58,7 @@ function custom_breadcrumbs_taxonomy_term_form($form, &$form_state, $type) {
   );
   module_load_include('inc', 'custom_breadcrumbs', 'custom_breadcrumbs.admin');
   $form += custom_breadcrumbs_common_form_elements($bid, $breadcrumb);
-  $taxonomy_breadcrumbs_mode = variable_get('custom_breadcrumbs_taxonomy_use_hierarchy', TRUE);
+  $taxonomy_breadcrumbs_mode = $config->get('custom_breadcrumbs_taxonomy_use_hierarchy');
   if ($taxonomy_breadcrumbs_mode) {
     // Limit one title and path per taxonomy term.
     $form['titles'] = array(
@@ -97,6 +97,7 @@ function custom_breadcrumbs_taxonomy_term_form($form, &$form_state, $type) {
  * @see custom_breadcrumbs_form_submit()
  */
 function custom_breadcrumbs_taxonomy_vocabulary_form($form, &$form_state, $type) {
+  $config = config('custom_breadcrumbs.settings');
   $form = array();
   $bid = arg(5);
   $breadcrumb = NULL;
@@ -111,27 +112,27 @@ function custom_breadcrumbs_taxonomy_vocabulary_form($form, &$form_state, $type)
 
   // Get a list of all vocabularies.
   $vocabularies = taxonomy_get_vocabularies();
-  $excluded = variable_get('custom_breadcrumbs_taxonomy_excluded_vocabs', array());
+  $excluded = $config->get('custom_breadcrumbs_taxonomy_excluded_vocabs');
   $options = array();
-  foreach ($vocabularies as $vid => $vocabulary) {
-    if (!in_array($vocabulary->machine_name, $excluded)) {
-      $options[$vid] = $vocabulary->name;
+  foreach ($vocabularies as $vocabulary_name => $vocabulary) {
+    if (!in_array($vocabulary_name, $excluded)) {
+      $options[$vocabulary_name] = $vocabulary_name;
     }
   }
-  $form['vid'] = array(
+  $form['vocabulary_name'] = array(
     '#type' => 'select',
     '#title' => t('Vocabulary'),
     '#options' => $options,
     '#required' => TRUE,
     '#description' => t('Select the taxonomy vocabulary to apply this breadcrumb to. <a href="@excluded">Excluded vocabularies</a> will not be listed here.', array('@excluded' => url('admin/config/user-interface/custom-breadcrumbs'))),
-    '#default_value' => isset($breadcrumb->machine_name) ? $breadcrumb->vid : NULL,
+    '#default_value' => isset($breadcrumb->machine_name) ? $breadcrumb->$vocabulary : NULL,
     '#weight' => -10,
   );
 
   module_load_include('inc', 'custom_breadcrumbs', 'custom_breadcrumbs.admin');
   $form += custom_breadcrumbs_common_form_elements($bid, $breadcrumb);
 
-  $taxonomy_breadcrumbs_mode = variable_get('custom_breadcrumbs_taxonomy_use_hierarchy', TRUE);
+  $taxonomy_breadcrumbs_mode = $config->get('custom_breadcrumbs_taxonomy_use_hierarchy');
   if ($taxonomy_breadcrumbs_mode) {
     // Limit one title and path per taxonomy vocabulary.
     $form['titles'] = array(

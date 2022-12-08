@@ -157,7 +157,7 @@ function custom_breadcrumbs_panels_ctools_render_alter($info, $page, $data) {
 
   // Is this a taxonomy term template?
   // @codingStandardsIgnoreLine
-  if (isset($task['admin path']) && ($task['admin path'] == "taxonomy/term/%taxonomy_term") && module_exists('custom_breadcrumbs_taxonomy') && variable_get('custom_breadcrumbs_taxonomy_panels', FALSE)) {
+  if (isset($task['admin path']) && ($task['admin path'] == "taxonomy/term/%taxonomy_term") && module_exists('custom_breadcrumbs_taxonomy') && config_get('custom_breadcrumbs.settings', ('custom_breadcrumbs_taxonomy_panels')) {
     module_load_include('inc', 'custom_breadcrumbs_taxonomy');
     // @codingStandardsIgnoreLine
     foreach ($contexts as $context) {
@@ -194,7 +194,7 @@ function custom_breadcrumbs_panels_ctools_render_alter($info, $page, $data) {
     }
   }
 
-  if (variable_get('custom_breadcrumbs_set_menu_breadcrumb', FALSE)) {
+  if (config_get('custom_breadcrumbs.settings', ('custom_breadcrumbs_set_menu_breadcrumb')) {
     // If a panels breadcrumb has not been defined for this panel, then use the
     // default menu structure.
     custom_breadcrumbs_set_menu_breadcrumb();
@@ -217,7 +217,7 @@ function custom_breadcrumbs_panels_form_alter(&$form, $form_state, $form_id) {
         '#type' => 'checkbox',
         '#title' => t('Use taxonomy breadcrumbs for panels'),
         // @codingStandardsIgnoreLine
-        '#default_value' => variable_get('custom_breadcrumbs_taxonomy_panels', FALSE),
+        '#default_value' => config_get('custom_breadcrumbs.settings', ('custom_breadcrumbs_taxonomy_panels'),
         '#description' => t('If enabled, the view argument and/or the taxonomy structure of nodes returned by panels will be used to form the taxonomy breadcrumb trail.'),
         '#weight' => 45,
       );
