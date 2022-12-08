@@ -55,12 +55,12 @@ function _custom_breadcrumbs_taxonomy_set_breadcrumb($tid, $vocabulary = NULL, $
   if (isset($_SESSION['custom_breadcrumbs_taxonomy_set'])) {
     unset($_SESSION['custom_breadcrumbs_taxonomy_set']);
   }
-  if (config_get('custom_breadcrumbs.settings', ('custom_breadcrumbs_taxonomy_use_hierarchy') && (!custom_breadcrumbs_exclude_path())) {
+  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_taxonomy_use_hierarchy') && (!custom_breadcrumbs_exclude_path())) {
     $breadcrumb = custom_breadcrumbs_taxonomy_generate_breadcrumb($tid, $vocabulary, $is_term_page, $objs);
     if ($is_term_page) {
       _custom_breadcrumbs_taxonomy_recent_term($tid);
     }
-    if (config_get('custom_breadcrumbs.settings', ('custom_breadcrumbs_taxonomy_include_node_title') && isset($objs['node'])) {
+    if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_taxonomy_include_node_title') && isset($objs['node'])) {
       $breadcrumb[] = check_plain($objs['node']->title);
     }
     backdrop_set_breadcrumb($breadcrumb);
@@ -159,8 +159,8 @@ function custom_breadcrumbs_taxonomy_node_get_recent_term($node) {
  */
 function _custom_breadcrumbs_taxonomy_recent_term($tid = NULL) {
   global $user;
-  if (config_get('custom_breadcrumbs.settings', ('custom_breadcrumbs_taxonomy_session') &&
-      !(($user->uid == 0) && config_get('custom_breadcrumbs.settings', ('custom_breadcrumbs_taxonomy_no_anon_sessions'))) {
+  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_taxonomy_session') &&
+      !(($user->uid == 0) && config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_taxonomy_no_anon_sessions'))) {
     if (!is_null($tid)) {
       $_SESSION['custom_breadcrumbs_previous_term'] = $tid;
     }
@@ -285,7 +285,7 @@ function custom_breadcrumbs_taxonomy_generate_breadcrumb($tid, $vocabulary = NUL
       $term_trail = _custom_breadcrumbs_taxonomy_term_trail($tid, $is_term_page, $objs, $types, count($trail));
       $trail = array_merge($trail, $term_trail);
       // Optionally remove the current TERM from end of breadcrumb trail.
-      if ((!config_get('custom_breadcrumbs.settings', ('custom_breadcrumbs_taxonomy_show_current_term') || ($is_term_page && !config_get('custom_breadcrumbs.settings', ('custom_breadcrumbs_taxonomy_show_current_term_term'))) && (count($trail) > 1)) {
+      if ((!config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_taxonomy_show_current_term') || ($is_term_page && !config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_taxonomy_show_current_term_term'))) && (count($trail) > 1)) {
         array_pop($trail);
       }
     }
@@ -318,7 +318,7 @@ function _custom_breadcrumbs_taxonomy_tt($name, $default, $langcode = NULL) {
  */
 function _custom_breadcrumbs_taxonomy_home_trail() {
   $trail = array();
-  if (config_get('custom_breadcrumbs.settings', ('custom_breadcrumbs_taxonomy_append_breadcrumb')) {
+  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_taxonomy_append_breadcrumb')) {
     // Check to see if a breadcrumb has already been defined.
     $trail = backdrop_get_breadcrumb();
   }
@@ -378,7 +378,7 @@ function _custom_breadcrumbs_taxonomy_vocabulary_trail($vocabulary, $is_term_pag
     $options = _custom_breadcrumbs_identifiers_option($part, $bid);
     $trail = array(l($title, $vocabulary_path, $options));
   }
-  elseif (config_get('custom_breadcrumbs.settings', ('custom_breadcrumbs_taxonomy_show_vocabulary')) {
+  elseif (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_taxonomy_show_vocabulary')) {
     $trail = array(check_plain($title));
   }
   return $trail;
@@ -456,7 +456,7 @@ function _custom_breadcrumbs_taxonomy_term_trail($tid, $is_term_page = FALSE, $o
  */
 function custom_breadcrumbs_taxonomy_set_session() {
   global $user;
-  if (config_get('custom_breadcrumbs.settings', ('custom_breadcrumbs_taxonomy_session') && !(($user->uid == 0) && config_get('custom_breadcrumbs.settings', ('custom_breadcrumbs_taxonomy_no_anon_sessions'))) {
+  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_taxonomy_session') && !(($user->uid == 0) && config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_taxonomy_no_anon_sessions'))) {
     $_SESSION['custom_breadcrumbs_taxonomy_set'] = TRUE;
   }
 }
