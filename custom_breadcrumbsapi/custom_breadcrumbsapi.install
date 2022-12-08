@@ -49,7 +49,7 @@ function custom_breadcrumbsapi_schema() {
         'not null' => TRUE,
         'description' => "Name of module page implementing custom breadcrumbs.",
       ),
-      'language' => array(
+      'langcode' => array(
         'type' => 'varchar',
         'length' => 12,
         'not null' => TRUE,
@@ -58,8 +58,8 @@ function custom_breadcrumbsapi_schema() {
       ),
     ),
     'indexes' => array(
-      'language' => array('language'),
-      'module_language' => array('module_page', 'language'),
+      'langcode' => array('langcode'),
+      'module_langcode' => array('module_page', 'langcode'),
     ),
     'primary key' => array('bid'),
   );
@@ -69,7 +69,7 @@ function custom_breadcrumbsapi_schema() {
 /**
  * Implements hook_update_last_removed().
  */
-function custom_breadcrumbs_identifiers_update_last_removed() {
+function custom_breadcrumbsapi_update_last_removed() {
   return 6200;
 }
 

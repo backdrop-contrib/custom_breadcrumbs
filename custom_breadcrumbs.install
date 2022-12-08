@@ -49,7 +49,7 @@ function custom_breadcrumbs_schema() {
         'default' => 'AND',
         'description' => 'Node types the {custom_breadcrumb} should apply to.',
       ),
-      'language' => array(
+      'langcode' => array(
         'type' => 'varchar',
         'length' => 12,
         'not null' => TRUE,
@@ -58,8 +58,8 @@ function custom_breadcrumbs_schema() {
       ),
     ),
     'indexes' => array(
-      'language' => array('language'),
-      'node_language' => array('node_type', 'language'),
+      'langcode' => array('langcode'),
+      'node_langcode' => array('node_type', 'langcode'),
     ),
     'primary key' => array('bid'),
   );

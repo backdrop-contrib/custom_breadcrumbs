@@ -1,8 +1,8 @@
 name = Custom breadcrumbs for views
+description = Provides custom breadcrumbs for views pages.
 package = Custom breadcrumbs
 dependencies[] = custom_breadcrumbs
 dependencies[] = views
-description = Provides custom breadcrumbs for views pages.
 backdrop = 1.x
 type = module
 

@@ -138,7 +138,7 @@ function _custom_breadcrumbs_paths_set_breadcrumb(array $objs = array(), $priori
   static $success;
   // Allow a higher priority request to take precedence.
   if (!isset($success) || ($priority > $success)) {
-    $matchpath = variable_get('custom_breadcrumbs_paths_allow_wildcards', FALSE);
+    $matchpath = config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_paths_allow_wildcards');
     $breadcrumbs = _custom_breadcrumbs_paths_get_breadcrumbs($matchpath);
     if (!empty($breadcrumbs)) {
       foreach ($breadcrumbs as $id => $breadcrumb) {
@@ -229,9 +229,9 @@ function _custom_breadcrumbs_paths_page_match($breadcrumb) {
   $page_match = FALSE;
   $request = request_path();
   if (isset($request)) {
-    if (isset($breadcrumb->language) && $breadcrumb->language != '') {
+    if (isset($breadcrumb->langcode) && $breadcrumb->langcode != '') {
       // Check for a match on the prefixed path.
-      $path = $breadcrumb->language . '/' . $breadcrumb->specific_path;
+      $path = $breadcrumb->langcode . '/' . $breadcrumb->specific_path;
       $page_match = _custom_breadcrumbs_match_path($request, $path);
     }
     else {
@@ -264,7 +264,7 @@ function custom_breadcrumbs_paths_cb_node_form_table($node) {
   // Don't return anything if the node is newly created.
   if (isset($node->nid)) {
     $alias = !empty($node->path['alias']) ? $node->path['alias'] : backdrop_get_path_alias("node/" . $node->nid);
-    $matchpath = variable_get('custom_breadcrumbs_paths_allow_wildcards', FALSE);
+    $matchpath = config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_paths_allow_wildcards');
     $param = ($matchpath) ? array() : array('specific_path' => $alias);
     $breadcrumbs = custom_breadcrumbs_load_breadcrumbs('custom_breadcrumbs_paths', NULL, $param);
     foreach ($breadcrumbs as $key => $breadcrumb) {
@@ -295,7 +295,7 @@ function custom_breadcrumbs_paths_form($form, &$form_state, $type) {
     backdrop_set_title(t('Add Custom Breadcrumb for Path'));
   }
   $description = t('The Backdrop path that this custom breadcrumb trail will apply to.');
-  if (variable_get('custom_breadcrumbs_paths_allow_wildcards', FALSE)) {
+  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_paths_allow_wildcards')) {
     $description .= ' ' . t("The '*' character can be used as a wildcard to set a custom breadcrumb for all matching paths. For example, foo/bar* could be used to match every page with a path beginning with foo/bar. Do not include language prefixes in the path. This will be handled automatically according to the selected language.");
   }
   $form['specific_path'] = array(

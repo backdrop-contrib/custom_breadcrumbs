@@ -10,7 +10,7 @@
  *
  * @codingStandardsIgnoreStart
  * @return
- *   An array of text strings describing special identifier behavoir.
+ *   An array of text strings describing special identifier behavior.
  * @codingStandardsIgnoreEnd
  */
 function custom_breadcrumbs_identifiers_cb_identifier_list() {
@@ -47,7 +47,7 @@ function custom_breadcrumbs_identifiers_cb_identifier_values($identifier, $obj) 
     case '<none>':
       $title = check_plain($obj['title']);
       // Optionally wrap plain text crumb in span tag with class identifiers.
-      if (variable_get('custom_breadcrumbs_none_span', FALSE)) {
+      if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_none_span')) {
         $class = 'custom-breadcrumbs-none';
         $attributes = $obj['attributes']['attributes'];
         if (!empty($attributes['class'])) {
@@ -199,7 +199,7 @@ function custom_breadcrumbs_identifiers_form_alter(&$form, $form_state, $form_id
       '#title' => t("Wrap plain text breadcrumbs in &lt;span&gt; tags."),
       '#description' => t("If enabled, breadcrumbs that use &lt;none&gt; for the link will be wrapped in &lt;span&gt; tags with the custom-breadcrumbs-none class identifier and any other applicable classes."),
       // @codingStandardsIgnoreLine
-      '#default_value' => variable_get('custom_breadcrumbs_none_span', FALSE),
+      '#default_value' => config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_none_span'),
     );
   }
 }

@@ -62,29 +62,6 @@ function _custom_breadcrumbs_breadcrumb_name($breadcrumb) {
 }
 
 /**
- * Implements hook_variable_info().
- */
-function custom_breadcrumbs_variable_info($options) {
-
-  $variables['custom_breadcrumb_home'] = array(
-    'type' => 'string',
-    'title' => t('Homepage breadcrumb', array(), $options),
-    'description' => t('Specify the homepage breadcrumb text.', array(), $options),
-    'default' => 'Home',
-    'required' => TRUE,
-  );
-  $variables['custom_breadcrumb_home_link'] = array(
-    'type' => 'string',
-    'title' => t('Homepage breadcrumb link', array(), $options),
-    'description' => t('Specify the homepage breadcrumb link.', array(), $options),
-    'default' => '<front>',
-    'required' => TRUE,
-  );
-
-  return $variables;
-}
-
-/**
  * Implements hook_theme().
  */
 function custom_breadcrumbs_theme() {
@@ -198,32 +175,6 @@ function custom_breadcrumbs_permission() {
       'restrict access' => TRUE,
     ),
   );
-}
-
-/**
- * Implements hook_help().
- */
-function custom_breadcrumbs_help($path, $arg) {
-  switch ($path) {
-    case 'admin/help#custom_breadcrumbs':
-      $output = '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t("This module allows you to create and modify breadcrumbs based on node type.") . '</p>';
-      $output .= '<h3>' . t('Uses') . '</h3>';
-      $output .= '<p>' . t('Create and edit custom breadcrumbs from the <a href="@link">Custom Breadcrumb Administration Page</a>. Select the node type the breadcrumb will apply to. There are two text fields below-- <em>Titles</em> and <em>Paths</em>. When creating  a breadcrumb, you are simply creating a link. In the custom breadcrumbs interface <em>Titles</em> describes the text of the breadcrumb while <em>Paths</em> describes the Backdrop path the breadcrumb links to. Each Title must have a corresponding Path.', array('@link' => url('admin/structure/custom_breadcrumbs'))) . '</p>';
-      $output .= '<strong>' . t('Examples') . '</strong>';
-      $output .= '<p>' . t("To give a very simple example of how to use this module, let's say I have a blog on my web site called 'Deep Thoughts.' To create this, I use the Views module to create a page at /blog that displays all the node types 'blog post.' Whenever a user views a blog post I want the breadcrumb to show Home > Deep Thoughts instead of simply Home. To do this I would simply type 'Deep Thoughts' in the 'Titles' field and and 'blog' in the 'Paths' field and save my breadcrumb.") . '</p>';
-      $output .= '<p>' . t("Using tokens, the Custom breadcrumbs module becomes much more flexible because breadcrumbs can become dynamic. You can create a breadcrumb like Home > Deep Thoughts > [Month of Blog Post] [Year of Blog Post], where 'Deep Thoughts' links to my main blog page and '[Month of Blog Post] [Year of Blog Post]' links to a view that shows only blog posts from the month and year the blog post was created (e.g. June 2007). For this, you would do the following:") . '</p>';
-      $output .= '<p>' . t("Node Type:<br />Blog Post<br /><br />Titles:<br />Deep Thoughts<br />[node:created:custom:M] [node:created:custom:Y]<br /><br />Paths:<br />blog<br />blog/[node:created:custom:m_Y]<br />(where of course, blog/[node:created:custom:m_Y] is the path to the view of blog posts from that month and year). So if you created a blog post on June 13, 2007 your breadcrumb would show Home > Deep Thoughts > June 2007 and 'June 2007' links to 'blog/06_2007' which is a view of all blog posts from June 2007.") . '</p>';
-      $output .= '<p>' . t("Also, note that Custom Breadcrumbs doesn't actually check to be sure that a particular path exists, so you'll have to check yourself to avoid 404 errors.") . '</p>';
-      $output .= '<p>' . t("Only users with 'administer custom breadcrumbs' permission will be allowed to create or modify custom breadcrumbs.") . '</p>';
-      $output .= '<strong>' . t("Breadcrumb Visibility") . '</strong>';
-      $output .= '<p>' . t("Users given 'use php in custom breadcrumbs' permission can include php code snippet that returns TRUE or FALSE to control whether or not the breadcrumb is displayed. Note that this code has access to the %node variable, and can check its type or any other property.", array('%node' => '$node')) . '</p>';
-      $output .= '<strong>' . t("Special Identifiers") . '</strong>';
-      $output .= '<p>' . t("Special identifiers are provided to achieve a special behavior:") . '</p>';
-      $output .= '<p>' . t("The following identifiers can be used to achieve a special behavior. Identifiers should be added to the paths area in the following format:  identifier|path.<br />For example: %pathauto_id|[ogname-raw]", array('%pathauto_id' => '<pathauto>')) . '</p>';
-      $output .= theme('custom_breadcrumbs_help_identifiers');
-      return $output;
-  }
 }
 
 /**
@@ -810,8 +761,8 @@ function custom_breadcrumbs_load_breadcrumbs($module, $table = NULL, $param = ar
         }
       }
       if (!empty($languages)) {
-        $query->condition('language', $languages, 'IN');
-        $query->orderBy('language', 'ASC');
+        $query->condition('langcode', $languages, 'IN');
+        $query->orderBy('langcode', 'ASC');
       }
       $ckey = "{$info['table']}-{" . implode('_', $cond_string) . "}-" . implode('_', $languages);
 
@@ -991,7 +942,6 @@ function custom_breadcrumbs_in_active_trail($link) {
 function custom_breadcrumbs_override_links($links, $attributes = array('class' => 'links')) {
   $output = '';
   if (count($links) > 0) {
-    debug($links);
     $output = '<ul' . backdrop_attributes($attributes) . '>';
 
     $num_links = count($links);
