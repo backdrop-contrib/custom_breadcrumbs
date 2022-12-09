@@ -36,9 +36,6 @@
  * the node's vocabularies.
  */
 
-// Default value for Advanced Settings, Node Types.
-define('CUSTOM_BREADCRUMBS_TAXONOMY_NODE_TYPES_DEFAULT', 'book');
-
 /**
  * Implements hook_cb_breadcrumb_info().
  *
@@ -453,7 +450,7 @@ function custom_breadcrumbs_taxonomy_form_custom_breadcrumbs_admin_settings_alte
     $options[$vocab->machine_name] = $name;
   }
 
-  $cb_vocabs = config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_taxonomy_excluded_vocabs');
+  $cb_vocabs = $config->get('custom_breadcrumbs_taxonomy_excluded_vocabs');
   $default = array();
   foreach ($cb_vocabs as $index => $value) {
     if ($value) {

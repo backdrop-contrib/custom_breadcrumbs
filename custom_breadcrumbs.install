@@ -36,12 +36,6 @@ function custom_breadcrumbs_schema() {
         'not null' => TRUE,
         'description' => 'A return-delimited list of url paths for the breadcrumb links.',
       ),
-      'visibility_php' => array(
-        'type' => 'text',
-        'not null' => TRUE,
-        'size' => 'medium',
-        'description' => 'An optional PHP snippet to control the {custom_breadcrumb} visibility.',
-      ),
       'node_type' => array(
         'type' => 'varchar',
         'length' => 64,
@@ -80,7 +74,8 @@ function custom_breadcrumbs_update_last_removed() {
  */
 
 /**
- * Move custom breadcrumbs settings from variables to config.
+ * Move custom breadcrumbs settings from variables to config. Rename language
+ * column to langcode and update indexes.
  */
 function custom_breadcrumbs_update_1000() {
   // Migrate variables to config.
@@ -92,7 +87,6 @@ function custom_breadcrumbs_update_1000() {
   $config->set('custom_breadcrumbs_set_menu_breadcrumb', update_variable_get('custom_breadcrumbs_set_menu_breadcrumb', FALSE));
   $config->set('custom_breadcrumbs_menu_list', update_variable_get('custom_breadcrumbs_menu_list', array()));
   $config->set('custom_breadcrumbs_set_global_home_breadcrumb', update_variable_get('custom_breadcrumbs_set_global_home_breadcrumb', FALSE));
-  $config->set('custom_breadcrumbs_use_php_in_titles', update_variable_get('custom_breadcrumbs_use_php_in_titles', FALSE));
   $config->set('custom_breadcrumbs_force_active_trail', update_variable_get('custom_breadcrumbs_force_active_trail', FALSE));
   $config->set('custom_breadcrumbs_use_exclude_list', update_variable_get('custom_breadcrumbs_use_exclude_list', FALSE));
   $config->set('custom_breadcrumbs_exclude_list', update_variable_get('custom_breadcrumbs_exclude_list', ""));
@@ -122,9 +116,35 @@ function custom_breadcrumbs_update_1000() {
   update_variable_del('custom_breadcrumbs_even_odd_class');
   update_variable_del('custom_breadcrumbs_type_class');
   update_variable_del('custom_breadcrumbs_append_bid_class');
+
+  // Rename language column to langcode.
+  $langcode_spec = array(
+    'type' => 'varchar',
+    'length' => 12,
+    'not null' => TRUE,
+    'default' => '',
+    'description' => 'The language this breadcrumb is for; if blank, the breadcrumb will be used for unknown languages.',
+  );
+  $indexes_spec = array(
+    'langcode' => array('langcode'),
+    'node_langcode' => array('node_type', 'langcode'),
+  );
+  db_drop_index('custom_breadcrumb', 'language');
+  db_drop_index('custom_breadcrumb', 'node_language');
+  db_change_field('custom_breadcrumb', 'language', 'langcode', $langcode_spec, $indexes_spec);
+
 }
 
 /**
  * @} End of "defgroup updates-7.x-to-1.x"
  * The next series of updates should start at 2000.
  */
+
+ /**
+  * Remove unneeded PHP visibility field.
+  */
+  function custom_breadcrumbs_update_2000 () {
+    if (db_field_exists('custom_breadcrumb', 'visibility_php')) {
+      db_drop_field('custom_breadcrumb', 'visibility_php');
+    }
+  }

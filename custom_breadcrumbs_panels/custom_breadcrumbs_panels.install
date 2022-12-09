@@ -37,12 +37,6 @@ function custom_breadcrumbs_panels_schema() {
         'not null' => FALSE,
         'description' => 'A return-delimited list of url paths for the breadcrumb links.',
       ),
-      'visibility_php' => array(
-        'type' => 'text',
-        'not null' => TRUE,
-        'size' => 'medium',
-        'description' => 'An optional PHP snippet to control the {custom_breadcrumbs_panels} visibility.',
-      ),
       'panel_id' => array(
         'type' => 'varchar',
         'length' => 255,
@@ -70,15 +64,45 @@ function custom_breadcrumbs_panels_schema() {
  * Implements hook_uninstall().
  */
 function custom_breadcrumbs_panels_uninstall() {
-
-  // Remove persistent variables.
-  variable_del('custom_breadcrumbs_taxonomy_panels');
+  // Reset config to defaults.
+  config_set('custom_breadcrumbs.settings', 'custom_breadcrumbs_taxonomy_panels', FALSE);
 }
 
 /**
- * Implements hook_update_last_removed().
+ * Move custom breadcrumbs panels settings from variables to config. Rename
+ * language column to langcode.
  */
-function custom_breadcrumbs_panels_update_last_removed() {
-  return 6200;
+function custom_breadcrumbs_panels_update_1000() {
+  $config = config('custom_breadcrumbs.settings');
+  $config->set('custom_breadcrumbs_taxonomy_panels', update_variable_get('custom_breadcrumbs_taxonomy_panels', FALSE);
+  $config->save();
+
+  // Delete variables.
+  update_variable_del('custom_breadcrumbs_taxonomy_panels');
+
+  // Rename language column to langcode.
+  db_drop_index('custom_breadcrumbs_panels', 'language');
+  db_drop_index('custom_breadcrumbs_panels', 'panelid_language');
+  $langcode_spec = array(
+    'type' => 'varchar',
+    'length' => 12,
+    'not null' => TRUE,
+    'default' => '',
+    'description' => 'The language this breadcrumb is for; if blank, the breadcrumb will be used for unknown languages.',
+  );
+  $indexes_spec = array(
+    'langcode' => array('langcode'),
+    'panelid_langcode' => array('panel_id', 'langcode'),
+  );
+  db_change_field('custom_breadcrumbs_panels', 'language', 'langcode', $langcode_spec, $indexes_spec);
 }
 
+
+ /**
+  * Remove unneeded PHP visibility field.
+  */
+  function custom_breadcrumbs_panels_update_2000 () {
+    if (db_field_exists('custom_breadcrumbs_panels', 'visibility_php')) {
+      db_drop_field('custom_breadcrumbs_panels', 'visibility_php');
+    }
+  }

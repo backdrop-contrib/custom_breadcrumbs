@@ -26,7 +26,6 @@ function custom_breadcrumbs_paths_install() {
       ->fields(array(
         'titles' => $title,
         'paths' => $newpath,
-        'visibility_php' => $breadcrumb->visibility_php,
         'specific_path' => $specific_path,
         'set_active_menu' => $breadcrumb->set_active_menu,
         'langcode' => $breadcrumb->langcode,
@@ -76,12 +75,6 @@ function custom_breadcrumbs_paths_schema() {
         'not null' => FALSE,
         'description' => 'A return-delimited list of url paths for the breadcrumb links.',
       ),
-      'visibility_php' => array(
-        'type' => 'text',
-        'not null' => TRUE,
-        'size' => 'medium',
-        'description' => 'An optional PHP snippet to control the {custom_breadcrumbs_views} visibility.',
-      ),
       'specific_path' => array(
         'type' => 'varchar',
         'length' => 255,
@@ -106,10 +99,11 @@ function custom_breadcrumbs_paths_schema() {
 }
 
 /**
- * Implements hook_update_last_removed().
+ * Implements hook_uninstall().
  */
-function custom_breadcrumbs_paths_update_last_removed() {
-  return 6200;
+function custom_breadcrumbs_paths_uninstall() {
+  // Reset config to defaults.
+  config_set('custom_breadcrumbs.settings', 'custom_breadcrumbs_paths_allow_wildcards', FALSE);
 }
 
 /**
@@ -119,7 +113,8 @@ function custom_breadcrumbs_paths_update_last_removed() {
  */
 
 /**
- * Move custom breadcrumbs settings from variables to config.
+ * Move custom breadcrumbs settings from variables to config. Rename language
+ * column to langcode and update indexes.
  */
 function custom_breadcrumbs_paths_update_1000() {
   // Migrate variables to config.
@@ -129,9 +124,34 @@ function custom_breadcrumbs_paths_update_1000() {
 
   // Delete variables.
   update_variable_del('custom_breadcrumbs_paths_allow_wildcards');
+
+  // Rename language column to langcode.
+  db_drop_index('custom_breadcrumbs_paths', 'language');
+  db_drop_index('custom_breadcrumbs_paths', 'path_language');
+  $langcode_spec = array(
+    'type' => 'varchar',
+    'length' => 12,
+    'not null' => TRUE,
+    'default' => '',
+    'description' => 'The language this breadcrumb is for; if blank, the breadcrumb will be used for unknown languages.',
+  );
+  $indexes_spec = array(
+    'langcode' => array('langcode'),
+    'path_langcode' => array('specific_path', 'langcode'),
+  );
+  db_change_field('custom_breadcrumbs_paths', 'language', 'langcode', $langcode_spec, $indexes_spec);
 }
 
 /**
  * @} End of "defgroup updates-7.x-to-1.x"
  * The next series of updates should start at 2000.
  */
+
+  /**
+  * Remove unneeded PHP visibility field.
+  */
+  function custom_breadcrumbs_paths_update_2000 () {
+    if (db_field_exists('custom_breadcrumbs_paths', 'visibility_php')) {
+      db_drop_field('custom_breadcrumbs_paths', 'visibility_php');
+    }
+  }

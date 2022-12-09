@@ -363,18 +363,6 @@ function _custom_breadcrumbs_get_breadcrumb($breadcrumb, $objs, &$locations) {
     );
   }
 
-  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_use_php_in_titles')) {
-    $titles = extract_php($breadcrumb->titles, $objs);
-    // Titles and paths arrays can also be provided as elements of an
-    // associative array.
-    if (isset($titles['titles']) && is_array($titles['titles']) && isset($titles['paths']) && is_array($titles['paths'])) {
-      $paths = $titles['paths'];
-      $titles = $titles['titles'];
-    }
-    else {
-      $paths = extract_php($breadcrumb->paths, $objs);
-    }
-  }
   if (!isset($titles) || is_null($titles)) {
     $titles = preg_split("/[\n]+/", $breadcrumb->titles);
   }
@@ -786,7 +774,8 @@ function custom_breadcrumbs_load_breadcrumbs($module, $table = NULL, $param = ar
 }
 
 /**
- * Determines breadcrumb visibility by evaluating PHP code.
+ * Determines breadcrumb visibility. This function may be less helpful
+ * now that PHP code evaluation has been stripped out.
  *
  * @param object $breadcrumb
  *   The breadcrumb object.
@@ -802,21 +791,6 @@ function custom_breadcrumbs_load_breadcrumbs($module, $table = NULL, $param = ar
 function custom_breadcrumbs_is_visible($breadcrumb, $objs = array()) {
   // @codingStandardsIgnoreEnd
   $visibility = TRUE;
-  if (isset($breadcrumb->visibility_php) && $breadcrumb->visibility_php) {
-    // Guard against hidden spaces.
-    $trimmed = trim($breadcrumb->visibility_php);
-    if ($trimmed != '') {
-      // Provide access to objects by standard variable names.
-      foreach ($objs as $key => $obj) {
-        // @codingStandardsIgnoreLine
-        $$key = is_object($obj) ? clone $obj : $obj;
-      }
-      ob_start();
-      // @codingStandardsIgnoreLine
-      $visibility = eval('return ' . $trimmed . ';');
-      ob_end_clean();
-    }
-  }
   return $visibility;
 }
 
@@ -1230,38 +1204,6 @@ function _custom_breadcrumbs_get_module_weight($names) {
   }
 
   return $weights;
-}
-
-/**
- * Determines if a text string is php code and if it is, evaluate it.
- *
- * @param string $text
- *   A potential code snippet to evaluate.
- * @param array $objs
- *   An optional array of objects to make available to the php code snippet.
- *
- * @return string
- *   If the text string contains a php code snippet, it will be evaluated, and
- *   if the result is an array, it will be returned. Otherwise nothing is
- *   returned.
- *
- * @codingStandardsIgnoreStart
- */
-function extract_php($text, $objs = array()) {
-  // @codingStandardsIgnoreEnd
-  if (backdrop_substr(trim($text), 0, 5) == '<?php') {
-    // Strip php tags.
-    $text = str_replace(array('<?php', '?>'), '', $text);
-    foreach ($objs as $key => $obj) {
-      // @codingStandardsIgnoreLine
-      $$key = is_object($obj) ? clone $obj : $obj;
-    }
-    ob_start();
-    // @codingStandardsIgnoreLine
-    $output = eval($text);
-    ob_end_clean();
-    return (is_array($output)) ? $output : NULL;
-  }
 }
 
 /**

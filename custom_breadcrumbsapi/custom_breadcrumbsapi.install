@@ -37,12 +37,6 @@ function custom_breadcrumbsapi_schema() {
         'not null' => FALSE,
         'description' => "A return-delimited list of url paths for the breadcrumb links.",
       ),
-      'visibility_php' => array(
-        'type' => 'text',
-        'not null' => TRUE,
-        'size' => 'medium',
-        'description' => 'An optional PHP snippet to control the {custom_breadcrumbsapi} visibility.',
-      ),
       'module_page' => array(
         'type' => 'varchar',
         'length' => 255,
@@ -67,9 +61,31 @@ function custom_breadcrumbsapi_schema() {
 }
 
 /**
- * Implements hook_update_last_removed().
+ * Rename language column to langcode and update indexes.
  */
-function custom_breadcrumbsapi_update_last_removed() {
-  return 6200;
+function custom_breadcrumbsapi_update_1000() {
+  // Rename language column to langcode.
+  db_drop_index('custom_breadcrumbsapi', 'language');
+  db_drop_index('custom_breadcrumbsapi', 'module_language');
+  $langcode_spec = array(
+    'type' => 'varchar',
+    'length' => 12,
+    'not null' => TRUE,
+    'default' => '',
+    'description' => 'The language this breadcrumb is for; if blank, the breadcrumb will be used for unknown languages.',
+  );
+  $indexes_spec = array(
+    'langcode' => array('langcode'),
+    'module_langcode' => array('module_page', 'langcode'),
+  );
+  db_change_field('custom_breadcrumbsapi', 'language', 'langcode', $langcode_spec, $indexes_spec);
 }
 
+/**
+* Remove unneeded PHP visibility field.
+*/
+function custom_breadcrumbsapi_update_2000 () {
+  if (db_field_exists('custom_breadcrumbsapi', 'visibility_php')) {
+    db_drop_field('custom_breadcrumbsapi', 'visibility_php');
+  }
+}

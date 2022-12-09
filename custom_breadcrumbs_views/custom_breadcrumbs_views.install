@@ -27,7 +27,6 @@ function custom_breadcrumbs_views_install() {
       ->fields(array(
         'titles' => $title,
         'paths' => $newpath,
-        'visibility_php' => $breadcrumb->visibility_php,
         'views_path' => $views_path,
         'set_active_menu' => $breadcrumb->set_active_menu,
         'language' => $breadcrumb->language,
@@ -78,12 +77,6 @@ function custom_breadcrumbs_views_schema() {
         'not null' => FALSE,
         'description' => 'A return-delimited list of url paths for the breadcrumb links.',
       ),
-      'visibility_php' => array(
-        'type' => 'text',
-        'not null' => TRUE,
-        'size' => 'medium',
-        'description' => 'An optional PHP snippet to control the {custom_breadcrumbs_views} visibility.',
-      ),
       'views_path' => array(
         'type' => 'varchar',
         'length' => 255,
@@ -108,9 +101,31 @@ function custom_breadcrumbs_views_schema() {
 }
 
 /**
- * Implements hook_update_last_removed().
+ * Rename language column to langcode and update indexes.
  */
-function custom_breadcrumbs_views_update_last_removed() {
-  return 6200;
+function custom_breadcrumbs_views_update_1000() {
+  // Rename language column to langcode.
+  db_drop_index('custom_breadcrumbs_views', 'language');
+  db_drop_index('custom_breadcrumbs_views', 'vpath_language');
+  $langcode_spec = array(
+    'type' => 'varchar',
+    'length' => 12,
+    'not null' => TRUE,
+    'default' => '',
+    'description' => 'The language this breadcrumb is for; if blank, the breadcrumb will be used for unknown languages.',
+  );
+  $indexes_spec = array(
+    'langcode' => array('langcode'),
+    'vpath_langcode' => array('views_path', 'langcode'),
+  );
+  db_change_field('custom_breadcrumbs_views', 'language', 'langcode', $langcode_spec, $indexes_spec);
 }
 
+  /**
+  * Remove unneeded PHP visibility field.
+  */
+  function custom_breadcrumbs_views_update_2000 () {
+    if (db_field_exists('custom_breadcrumbs_views', 'visibility_php')) {
+      db_drop_field('custom_breadcrumbs_views', 'visibility_php');
+    }
+  }

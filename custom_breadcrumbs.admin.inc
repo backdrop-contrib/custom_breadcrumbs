@@ -87,7 +87,7 @@ function custom_breadcrumbs_page() {
     $row = array();
     $name = $breadcrumb->name;
     $type = $breadcrumb->breadcrumb_type;
-    $row['name'] = array('data' => $name . (!empty($breadcrumb->visibility_php) ? ' ' . t('with PHP snippet') : ''));
+    $row['name'] = array('data' => $name);
     $row['breadcrumb_type'] = array('data' => $type);
     if ($multilingual) {
       $row['language'] = array(
@@ -223,21 +223,12 @@ function custom_breadcrumbs_form($form, &$form_state, $type) {
 function custom_breadcrumbs_form_validate($form, &$form_state) {
   // Check to make sure there are an equal number of paths and titles.
   $check = TRUE;
-  if (!user_access('use php in custom breadcrumbs') || !config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_use_php_in_titles')) {
-    // Strip any PHP tags from paths and titles since they are not allowed.
-    $elements = array('titles', 'paths');
-    foreach ($elements as $element) {
-      if (strpos($form_state['values'][$element], '<?php') !== FALSE) {
-        $form_state['values'][$element] = str_replace(array('<?php', '?>'), '', $form_state['values'][$element]);
-        form_set_error($element, t('Use of PHP in !element is not permitted and will be filtered out.', array('!element' => $element)));
-      }
-    }
-  }
-  else {
-    // If PHP is used, don't validate number of paths and titles.
-    if ((strpos($form_state['values']['titles'], '<?php') !== FALSE) ||
-        (strpos($form_state['values']['paths'], '<?php') !== FALSE)) {
-      $check = FALSE;
+  // Strip any PHP tags from paths and titles since they are not allowed.
+  $elements = array('titles', 'paths');
+  foreach ($elements as $element) {
+    if (strpos($form_state['values'][$element], '<?php') !== FALSE) {
+      $form_state['values'][$element] = str_replace(array('<?php', '?>'), '', $form_state['values'][$element]);
+      form_set_error($element, t('Use of PHP in !element is not permitted and will be filtered out.', array('!element' => $element)));
     }
   }
   if ($check) {
@@ -330,18 +321,8 @@ function custom_breadcrumbs_common_form_elements($bid, $breadcrumb) {
       '#value' => '',
     );
   }
-  $form['visibility_php'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Breadcrumb visibility'),
-    '#access' => user_access('use php in custom breadcrumbs'),
-    '#description' => t('Determine whether this breadcrumb should be displayed by using a PHP snippet to return TRUE or FALSE. Note that this code has access to the $node variable, and can check its type or any other property. Do not use opening and closing php tags.'),
-    '#default_value' => isset($breadcrumb->visibility_php) ? $breadcrumb->visibility_php : '',
-  );
 
   $description = t('A list of titles for the breadcrumb links, one on each line. For each crumb title you can also specify a title attribute to add to the link. Separate the crumb title and the title attribute with a pipe (|) symbol.');
-  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_use_php_in_titles') && user_access('use php in custom breadcrumbs')) {
-    $description .= ' ' . t("Or, you can enter a small PHP code snippet (less than 250 characters) returning either an array of text strings for the breadcrumb titles, with one title per array element, or an associative array with elements 'titles' and 'paths' each containing an array of text strings for the breadcrumb titles and paths, respectively. Include the snippet between %php. Use with caution since incorrect PHP code can break your Backdrop site. Token replacement will occur after any PHP is evaluated.", array('%php' => '<?php ?>'));
-  }
 
   $form['titles'] = array(
     '#type' => 'textarea',
@@ -352,9 +333,6 @@ function custom_breadcrumbs_common_form_elements($bid, $breadcrumb) {
   );
 
   $description = t('A list of Backdrop paths for the breadcrumb links, one on each line.');
-  if (config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_use_php_in_titles') && user_access('use php in custom breadcrumbs')) {
-    $description .= ' ' . t("You can also enter a small PHP code snippet (less than 250 characters) returning an array of backdrop paths for the breadcrumb links, with one path per array element. Include the snippet between %php. Use with caution since incorrect PHP code can break your Backdrop site. Token replacement will occur after any PHP is evaluated.", array('%php' => '<?php ?>'));
-  }
   $form['paths'] = array(
     '#type' => 'textarea',
     '#title' => t('Paths'),
@@ -502,14 +480,6 @@ function custom_breadcrumbs_admin_settings($form, &$form_state) {
     '#default_value' => $config->get('custom_breadcrumbs_set_global_home_breadcrumb'),
     '#description' => t("If enabled, the home breadcrumb text will be used on all pages, not just those with defined custom breadcrumbs. If you don't want a home breadcrumb to be displayed, just enable this option and make sure that the <em>home breadcrumb text</em> above is empty."),
     '#weight' => -40,
-  );
-
-  $form['adv_settings']['custom_breadcrumbs_use_php_in_titles'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Allow the use of PHP to set titles and paths'),
-    '#default_value' => $config->get('custom_breadcrumbs_use_php_in_titles'),
-    '#description' => t("If enabled, small PHP code snippets (less than 250 characters) can be used in the titles and paths section of the create breadcrumb forms. Each should return an array with text strings for each part of the crumb. Alternatively, a PHP code snippet placed in the titles box can return an associative array with elements 'titles' and 'paths', each an array of text strings. If this is done, the paths text field will be ignored."),
-    '#weight' => -35,
   );
 
   $form['adv_settings']['custom_breadcrumbs_experimental'] = array(
@@ -935,7 +905,7 @@ function custom_breadcrumbs_simple_breadcrumb_table($breadcrumbs) {
   $rows = array();
   foreach ($breadcrumbs as $breadcrumb) {
     $row = array();
-    $row[] = array('data' => $breadcrumb->name . (!empty($breadcrumb->visibility_php) ? ' ' . t('with PHP snippet') : ''));
+    $row[] = array('data' => $breadcrumb->name);
     $row[] = array('data' => $breadcrumb->breadcrumb_type);
     $row[] = array('data' => check_plain($breadcrumb->titles));
     $row[] = array('data' => check_plain($breadcrumb->paths));

@@ -46,7 +46,6 @@ function custom_breadcrumbs_taxonomy_install() {
         ->fields(array(
           'paths' => $breadcrumb->path,
           'tid' => $breadcrumb->tid,
-          'visibility_php' => '',
         ))
         ->execute();
       ++$found;
@@ -58,7 +57,6 @@ function custom_breadcrumbs_taxonomy_install() {
         ->fields(array(
           'paths' => $breadcrumb->path,
           'vid' => $breadcrumb->vid,
-          'visibility_php' => '',
         ))
         ->execute();
       ++$found;
@@ -73,16 +71,6 @@ function custom_breadcrumbs_taxonomy_install() {
     }
   }
   backdrop_set_message($t('Custom Breadcrumbs for Taxonomy Terms and Vocabularies: Taxonomy based breadcrumbs should now appear on node pages and taxonomy/term pages.  For the most common applications this module will work "out of the box" and no further configuration is necessary.  If customization is desired settings can be changed on the ') . l($t('administration page'), 'admin/config/user-interface/custom-breadcrumbs') . '.');
-}
-
-/**
- * Implements hook_uninstall().
- */
-function custom_breadcrumbs_taxonomy_uninstall() {
-  // Remove persistent variables.
-  db_delete('variable')
-    ->condition('name', 'custom_breadcrumbs_taxonomy_%', 'like')
-    ->execute();
 }
 
 /**
@@ -122,12 +110,6 @@ function custom_breadcrumbs_taxonomy_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
         'description' => 'The taxonomy term id for this breadcrumb.',
-      ),
-      'visibility_php' => array(
-        'type' => 'text',
-        'not null' => TRUE,
-        'size' => 'medium',
-        'description' => 'An optional PHP snippet to control the {custom_breadcrumbs_views} visibility.',
       ),
       'langcode' => array(
         'type' => 'varchar',
@@ -178,12 +160,6 @@ function custom_breadcrumbs_taxonomy_schema() {
         'not null' => TRUE,
         'description' => 'The taxonomy vocabulary name for this breadcrumb.',
       ),
-      'visibility_php' => array(
-        'type' => 'text',
-        'not null' => TRUE,
-        'size' => 'medium',
-        'description' => 'An optional PHP snippet to control the {custom_breadcrumbs_views} visibility.',
-      ),
       'langcode' => array(
         'type' => 'varchar',
         'length' => 12,
@@ -203,9 +179,113 @@ function custom_breadcrumbs_taxonomy_schema() {
 }
 
 /**
- * Implements hook_update_last_removed().
- *
+ * Implements hook_uninstall().
  */
-function custom_breadcrumbs_taxonomy_update_last_removed() {
-  return 6200;
+function custom_breadcrumbs_taxonomy_uninstall() {
+  $config = config('custom_breadcrumbs.settings');
+  // Reset config to defaults.
+  $config->set('custom_breadcrumbs_taxonomy_use_hierarchy', 1);
+  $config->set('custom_breadcrumbs_taxonomy_append_breadcrumb', 0);
+  $config->set('custom_breadcrumbs_taxonomy_show_vocabulary', 0);
+  $config->set('custom_breadcrumbs_taxonomy_show_current_term', 1);
+  $config->set('custom_breadcrumbs_taxonomy_show_current_term_term', 0);
+  $config->set('custom_breadcrumbs_taxonomy_include_node_title', 0);
+  $config->set('custom_breadcrumbs_taxonomy_session', 0);
+  $config->set('custom_breadcrumbs_taxonomy_no_anon_sessions', 0);
+  $config->set('custom_breadcrumbs_taxonomy_uncache', 0);
+  $config->set('custom_breadcrumbs_taxonomy_views', 0);
+  $config->set('custom_breadcrumbs_taxonomy_result_nodes', 0);
+  $config->set('custom_breadcrumbs_taxonomy_include_nodes', 0);
+  $config->set('custom_breadcrumbs_taxonomy_node_types', array());
+  $config->set('custom_breadcrumbs_taxonomy_excluded_vocabs', array());
+  $config->save();
 }
+
+/**
+ * Move custom breadcrumbs taxonomy settings from variables to config. Rename
+ * language column to langcode and update indexes.
+ */
+function custom_breadcrumbs_taxonomy_update_1000() {
+  // Migrate variables to config.
+  $config = config('custom_breadcrumbs.settings');
+  $config->set('custom_breadcrumbs_taxonomy_use_hierarchy', update_variable_get('custom_breadcrumbs_taxonomy_use_hierarchy', 1));
+  $config->set('custom_breadcrumbs_taxonomy_append_breadcrumb', update_variable_get('custom_breadcrumbs_taxonomy_append_breadcrumb', 0));
+  $config->set('custom_breadcrumbs_taxonomy_show_vocabulary', update_variable_get('custom_breadcrumbs_taxonomy_show_vocabulary', 0));
+  $config->set('custom_breadcrumbs_taxonomy_show_current_term', update_variable_get('custom_breadcrumbs_taxonomy_show_current_term', 1));
+  $config->set('custom_breadcrumbs_taxonomy_show_current_term_term', update_variable_get('custom_breadcrumbs_taxonomy_show_current_term_term', 0));
+  $config->set('custom_breadcrumbs_taxonomy_include_node_title', update_variable_get('custom_breadcrumbs_taxonomy_include_node_title', 0));
+  $config->set('custom_breadcrumbs_taxonomy_session', update_variable_get('custom_breadcrumbs_taxonomy_session', 0));
+  $config->set('custom_breadcrumbs_taxonomy_no_anon_sessions', update_variable_get('custom_breadcrumbs_taxonomy_no_anon_sessions', 0));
+  $config->set('custom_breadcrumbs_taxonomy_uncache', update_variable_get('custom_breadcrumbs_taxonomy_uncache', 0));
+  $config->set('custom_breadcrumbs_taxonomy_views', update_variable_get('custom_breadcrumbs_taxonomy_views', 0));
+  $config->set('custom_breadcrumbs_taxonomy_result_nodes', update_variable_get('custom_breadcrumbs_taxonomy_result_nodes', 0));
+  $config->set('custom_breadcrumbs_taxonomy_include_nodes', update_variable_get('custom_breadcrumbs_taxonomy_include_nodes', 0));
+  $config->set('custom_breadcrumbs_taxonomy_node_types', update_variable_get('custom_breadcrumbs_taxonomy_node_types', array(
+    "card" => 0,
+    "page" => 0,
+    "post" => 0,
+  )));
+  $config->set('custom_breadcrumbs_taxonomy_excluded_vocabs', update_variable_get('custom_breadcrumbs_taxonomy_excluded_vocabs', array(
+     "tags" => 0,
+  )));
+  $config->save();
+
+  // Delete variables.
+  update_variable_del('custom_breadcrumbs_taxonomy_use_hierarchy');
+  update_variable_del('custom_breadcrumbs_taxonomy_append_breadcrumb');
+  update_variable_del('custom_breadcrumbs_taxonomy_show_vocabulary');
+  update_variable_del('custom_breadcrumbs_taxonomy_show_current_term');
+  update_variable_del('custom_breadcrumbs_taxonomy_show_current_term_term');
+  update_variable_del('custom_breadcrumbs_taxonomy_include_node_title');
+  update_variable_del('custom_breadcrumbs_taxonomy_session');
+  update_variable_del('custom_breadcrumbs_taxonomy_no_anon_sessions');
+  update_variable_del('custom_breadcrumbs_taxonomy_uncache');
+  update_variable_del('custom_breadcrumbs_taxonomy_views');
+  update_variable_del('custom_breadcrumbs_taxonomy_result_nodes');
+  update_variable_del('custom_breadcrumbs_taxonomy_include_nodes');
+  update_variable_del('custom_breadcrumbs_taxonomy_node_types');
+  update_variable_del('custom_breadcrumbs_taxonomy_excluded_vocabs');
+
+  // Rename language column to langcode.
+  db_drop_index('custom_breadcrumbs_taxonomy_term', 'language');
+  db_drop_index('custom_breadcrumbs_taxonomy_term', 'tid_language');
+  $langcode_spec = array(
+    'type' => 'varchar',
+    'length' => 12,
+    'not null' => TRUE,
+    'default' => '',
+    'description' => 'The language this breadcrumb is for; if blank, the breadcrumb will be used for unknown languages.',
+  );
+  $indexes_spec = array(
+    'langcode' => array('langcode'),
+    'tid_langcode' => array('tid', 'langcode'),
+  );
+  db_change_field('custom_breadcrumbs_taxonomy_term', 'language', 'langcode', $langcode_spec, $indexes_spec);
+
+  db_drop_index('custom_breadcrumbs_vocabulary', 'language');
+  db_drop_index('custom_breadcrumbs_vocabulary', 'vocabulary_language');
+  $langcode_spec = array(
+    'type' => 'varchar',
+    'length' => 12,
+    'not null' => TRUE,
+    'default' => '',
+    'description' => 'The language this breadcrumb is for; if blank, the breadcrumb will be used for unknown languages.',
+  );
+  $indexes_spec = array(
+    'langcode' => array('langcode'),
+    'vocabulary_langcode' => array('vocabulary', 'langcode'),
+  );
+  db_change_field('custom_breadcrumbs_vocabulary', 'language', 'langcode', $langcode_spec, $indexes_spec);
+}
+
+  /**
+  * Remove unneeded PHP visibility field.
+  */
+  function custom_breadcrumbs_taxonomy_update_2000 () {
+    if (db_field_exists('custom_breadcrumbs_taxonomy_term', 'visibility_php')) {
+      db_drop_field('custom_breadcrumbs_taxonomy_term', 'visibility_php');
+    }
+    if (db_field_exists('custom_breadcrumbs_taxonomy_vocabulary', 'visibility_php')) {
+      db_drop_field('custom_breadcrumbs_taxonomy_vocabulary', 'visibility_php');
+    }
+  }
