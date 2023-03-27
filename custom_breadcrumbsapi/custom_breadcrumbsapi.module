@@ -46,19 +46,6 @@ function _custom_breadcrumbsapi_breadcrumb_name($breadcrumb) {
 }
 
 /**
- * Implements hook_help().
- */
-function custom_breadcrumbsapi_help($path, $arg) {
-  switch ($path) {
-    case 'admin/help#custom_breadcrumbsapi':
-      $output = '<p>' . t("Custom Breadcrumbsapi provides a simple api that allows custom breadcrumbs to be defined for module pages that use a theme template or a custom_breadcrumbsapi hook. For the latter, module developers need to provide a <em>moduleName</em>_custom_breadcrumbsapi() function that returns an array containing the names of the module pages for which custom breadcrumbs may be defined. Then, in the callback functions for each of those pages, the following lines needs to be inserted:") . '</p>';
-      $output .= '<p><strong>' . t("backdrop_alter('breadcrumb', \$breadcrumb, '<em>module_page_name</em>');") . '</strong></p>';
-      $output .= t('within the function, preferably after defining $breadcrumb but before setting the breadcrumb.');
-      return $output;
-  }
-}
-
-/**
  * Implements hook_menu().
  */
 function custom_breadcrumbsapi_menu() {

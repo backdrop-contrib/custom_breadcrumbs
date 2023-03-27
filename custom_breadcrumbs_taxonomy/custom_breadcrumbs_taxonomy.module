@@ -276,33 +276,6 @@ function custom_breadcrumbs_taxonomy_views_pre_render(&$view) {
 }
 
 /**
- * Implements hook_help().
- */
-function custom_breadcrumbs_taxonomy_help($path, $arg) {
-  switch ($path) {
-    case 'admin/help#custom_breadcrumbs_taxonomy':
-      $output = '<p>' . t('The custom_breadcrumbs_taxonomy module generates taxonomy-based breadcrumbs on node pages and taxonomy/term pages. The breadcrumb trail takes on the form:') . '</p>';
-      $output .= '<p>' . t('[HOME] >> [VOCABULARY] >> TERM >> [TERM] ...') . '</p>';
-
-      $output .= '<ul>';
-      $output .= '<li>' . t('The text displayed for HOME is configurable below. The <em>HOME</em> breadcrumb (if present) links to the homepage. The text displayed for HOME is configurable by an administrator. If the HOME breadcrumb is not defined by the administrator, it will not appear in the breadcrumb trail.') . '</li>';
-      $output .= '<li>' . t('The <em>VOCABULARY</em> breadcrumb (if present) will link to an administrator defined page. If the VOCABULARY does not have an administrator defined page, it will not appear in the breadcrumb trail. This can be configured on the add/edit vocabulary pages within <a href="@taxonomy">administer >> categories</a> (taxonomy).', array('@taxonomy' => url('admin/structure/taxonomy'))) . '</li>';
-      $output .= '<li>' . t('Each <em>TERM</em> breadcrumb will link to either (1) taxonomy/term/tid by default, or (2) an administrator defined page if one is defined for the term. This can be configured on the add/edit term pages within <a href="@taxonomy">administer >> categories</a> (taxonomy).', array('@taxonomy' => url('admin/structure/taxonomy'))) . '</li>';
-      $output .= '</ul>';
-
-      $output .= '<h3>' . t('Examples:') . '</h3>';
-      $output .= '<ul>';
-      $output .= '<li>' . t('home >> term >> term') . '</li>';
-      $output .= '<li>' . t('mysite >> term >> term') . '</li>';
-      $output .= '<li>' . t('home >> vocabulary >> term >> term') . '</li>';
-      $output .= '<li>' . t('vocabulary >> term >> term') . '</li>';
-      $output .= '</ul>';
-
-      return $output;
-  }
-}
-
-/**
  * Implements hook_form_FORM_ID_alter().
  */
 function custom_breadcrumbs_taxonomy_form_custom_breadcrumbs_admin_settings_alter(&$form, $form_state, $form_id) {
