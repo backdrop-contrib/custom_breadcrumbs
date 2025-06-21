@@ -29,7 +29,7 @@ function custom_breadcrumbs_views_install() {
         'paths' => $newpath,
         'views_path' => $views_path,
         'set_active_menu' => $breadcrumb->set_active_menu,
-        'language' => $breadcrumb->language,
+        'langcode' => $breadcrumb->langcode,
       ))
       ->execute();
     backdrop_set_message($t('copied path ') . $views_path);
