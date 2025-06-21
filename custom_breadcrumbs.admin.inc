@@ -91,7 +91,7 @@ function custom_breadcrumbs_page() {
     $row['breadcrumb_type'] = array('data' => $type);
     if ($multilingual) {
       $row['language'] = array(
-        'data' => language_name($breadcrumb->language),
+        'data' => language_name($breadcrumb->langcode),
       );
     }
     $row['edit'] = l(t('edit'), $path . '/' . $breadcrumb->breadcrumb_type . '/edit/' . $breadcrumb->bid);
@@ -307,16 +307,16 @@ function custom_breadcrumbs_common_form_elements($bid, $breadcrumb) {
 
   $multilingual = _custom_breadcrumbs_multilingual();
   if ($multilingual) {
-    $form['language'] = array(
+    $form['langcode'] = array(
       '#type' => 'select',
       '#title' => t('Language'),
       '#options' => array('' => t('All languages')) + language_list(TRUE, TRUE),
-      '#default_value' => isset($breadcrumb->language) ? $breadcrumb->language : NULL,
+      '#default_value' => isset($breadcrumb->langcode) ? $breadcrumb->langcode : NULL,
       '#description' => t('A breadcrumb set for a specific language will always be used when displaying a node in that language, and takes precedence over breadcrumbs set for <em>All languages</em>.'),
     );
   }
   else {
-    $form['language'] = array(
+    $form['langcode'] = array(
       '#type' => 'value',
       '#value' => '',
     );
@@ -911,7 +911,7 @@ function custom_breadcrumbs_simple_breadcrumb_table($breadcrumbs) {
     $row[] = array('data' => check_plain($breadcrumb->paths));
     if ($multilingual) {
       $row[] = array(
-        'data' => language_name($breadcrumb->language),
+        'data' => language_name($breadcrumb->langcode),
       );
     }
     $row[] = l(t('edit'), 'admin/structure/custom_breadcrumbs/' . $breadcrumb->breadcrumb_type . '/edit/' . $breadcrumb->bid);
