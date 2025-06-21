@@ -137,7 +137,7 @@ function custom_breadcrumbs_page() {
  *   -1 if the second object is greater than the first,
  */
 function _custom_breadcrumbs_sort_cmp($bc1, $bc2) {
-  $custom_breadcrumbs_sort = config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_sort', array(
+  $custom_breadcrumbs_sort = state_get('custom_breadcrumbs_sort', array(
     'direction' => array(
       'name' => 'asc',
       'breadcrumb_type' => 'asc',
