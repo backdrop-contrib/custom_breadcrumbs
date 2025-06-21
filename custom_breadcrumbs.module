@@ -264,6 +264,17 @@ function custom_breadcrumbs_form_node_type_form_alter(&$form, $form_state, $form
       '#description' => t('Access is limited to users with administer custom breadcrumbs permission.'),
       '#default_value' => config_get('custom_breadcrumbs.settings', 'custom_breadcrumbs_show_form_table_' . $form['#node_type']->type, CUSTOM_BREADCRUMBS_SHOW_FORM_TABLE_DEFAULT),
     );
+
+    $form['#submit'][] = 'custom_breadcrumbs_form_node_type_form_submit';
+  }
+}
+
+/**
+ * Submit handler for node type form.
+ */
+function custom_breadcrumbs_form_node_type_form_submit(&$form, $form_state) {
+  if (isset($form_state['values']['custom_breadcrumbs_show_form_table'])) {
+    config_set('custom_breadcrumbs.settings', 'custom_breadcrumbs_show_form_table_' . $form_state['values']['type'], (bool) $form_state['values']['custom_breadcrumbs_show_form_table']);
   }
 }
 
