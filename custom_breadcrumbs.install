@@ -116,6 +116,7 @@ function custom_breadcrumbs_update_1000() {
   update_variable_del('custom_breadcrumbs_even_odd_class');
   update_variable_del('custom_breadcrumbs_type_class');
   update_variable_del('custom_breadcrumbs_append_bid_class');
+  update_variable_del('custom_breadcrumbs_sort');
 
   // Rename language column to langcode.
   $langcode_spec = array(
@@ -143,8 +144,8 @@ function custom_breadcrumbs_update_1000() {
  /**
   * Remove unneeded PHP visibility field.
   */
-  function custom_breadcrumbs_update_2000 () {
-    if (db_field_exists('custom_breadcrumb', 'visibility_php')) {
-      db_drop_field('custom_breadcrumb', 'visibility_php');
-    }
+function custom_breadcrumbs_update_2000 () {
+  if (db_field_exists('custom_breadcrumb', 'visibility_php')) {
+    db_drop_field('custom_breadcrumb', 'visibility_php');
   }
+}
