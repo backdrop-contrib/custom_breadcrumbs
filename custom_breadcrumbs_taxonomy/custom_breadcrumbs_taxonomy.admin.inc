@@ -119,7 +119,7 @@ function custom_breadcrumbs_taxonomy_vocabulary_form($form, &$form_state, $type)
       $options[$vocabulary_name] = $vocabulary_name;
     }
   }
-  $form['vocabulary_name'] = array(
+  $form['vocabulary'] = array(
     '#type' => 'select',
     '#title' => t('Vocabulary'),
     '#options' => $options,
